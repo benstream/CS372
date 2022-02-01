@@ -1,0 +1,22 @@
+{
+  "name": "login-page",
+  "version": "1.0.0",
+  "description": "Projects for CS 372 (Software Construction)",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benstream/CS372.git"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/benstream/CS372/issues"
+  },
+  "homepage": "https://github.com/benstream/CS372#readme",
+  "devDependencies": {
+    "prettier": "2.5.1"
+  }
+}
