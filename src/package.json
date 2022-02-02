@@ -4,7 +4,8 @@
   "description": "Projects for CS 372 (Software Construction)",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,7 @@
   },
   "homepage": "https://github.com/benstream/CS372#readme",
   "devDependencies": {
+    "nodemon": "^2.0.15",
     "prettier": "2.5.1"
   }
 }

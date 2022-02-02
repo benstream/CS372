@@ -12,15 +12,15 @@
     <h1>Welcome to CS 372.</h1>
   </body>
 
-  <div>
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" />
-  </div>
-
-  <div>
-    <label for="pass">Password:</label>
-    <input type="password" id="pass" name="password" required />
-  </div>
-
-  <input type="Submit" value="Sign in" />
+  <form action="/login" method="POST">
+    <div>
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" />
+    </div>
+    <div>
+      <label for="pass">Password:</label>
+      <input type="password" id="password" name="password" required />
+    </div>
+    <input type="submit" value="Sign in" />
+  </form>
 </html>
