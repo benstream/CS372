@@ -49,11 +49,11 @@ app.post('/users/login', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-	res.sendFile(__dirname + '/static/index.html')
+	res.sendFile(__dirname + '/static/index.html');
 });
 
 app.get('/login', (req, res) => {
-	res.sendFile(__dirname + '/static/login.html')
+	res.sendFile(__dirname + '/static/login.html');
 });
 
 // app.post('/login', (req, res) => {
@@ -63,5 +63,5 @@ app.get('/login', (req, res) => {
 // });
 
 app.listen(port, hostname, () => {
-	console.log(`Server running at http://${hostname}:${port}/`)
-})
+	console.log(`Server running at http://${hostname}:${port}/`);
+});
