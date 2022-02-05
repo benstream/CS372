@@ -12,14 +12,14 @@
 		<h1>Welcome to CS 372. 🚀</h1>
 	</body>
 
-	<form action="login">
+	<form action="http://localhost:8080/login" method="POST">
 		<div>
 			<label for="username">Username:</label>
-			<input type="text" id="pwd" name="username" />
+			<input type="text" name="uid" />
 		</div>
 		<div>
 			<label for="pass">Password:</label>
-			<input type="password" id="uid" name="password" required />
+			<input type="password" name="pwd" required />
 		</div>
 		<input type="submit" value="Sign in" />
 	</form>
