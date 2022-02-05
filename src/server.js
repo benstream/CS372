@@ -1,4 +1,4 @@
-// app.js
+// server.js
 // Benjamin Stream
 // Solomon Himelbloom
 // 2022-01-30
@@ -14,12 +14,13 @@ const hostname = '127.0.0.1';
 const port = 8080;
 
 app.post('/login', (req, res) => {
-  console.log(`${req.body.uid}`);
-  res.send(`Credentials: ${req.body.uid} ${req.body.pwd}`);
+	console.log(`\n--- CREDENTIALS ---`);
+	console.log(`Plain Text Password: ${req.body.uid}`);
+	res.send(`Username: ${req.body.uid} | Password: ${req.body.pwd}`);
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/static/index.html');
+	res.sendFile(__dirname + '/static/index.html');
 });
 
 app.listen(port, hostname, () => {
