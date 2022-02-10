@@ -6,4 +6,4 @@
 - Install relevant packages with `npm install`.
 
 # MongoDB
-- TODO: Provide relevant information about MongoDB.
+- Database: `cs372`

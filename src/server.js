@@ -12,20 +12,32 @@ const bcrypt = require('bcrypt');
 
 const app = express();
 
-// app.use('/favicon.ico', express.static('staic/favicon.ico'));
-
 app.use(parser.urlencoded({ extended: true }));
 
 const hostname = '127.0.0.1';
 const port = 8080;
 
-// TODO:
-// - Add salting and hashing with bcrypt.
-// - Create HTML file and then send.
+// TODO: Add salting and hashing with bcrypt.
 app.post('/login', (req, res) => {
+	var username = req.body.uid;
+	var password = req.body.pwd;
+
 	console.log(`\n--- CREDENTIALS ---`);
-	console.log(`Plain Text Password: ${req.body.pwd}`);
+	console.log(`Plain Text Username: ${username}`);
+	console.log(`Plain Text Password: ${password}`);
+
 	res.send(`Username: ${req.body.uid} & Password: ${req.body.pwd}`);
+
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+		var dbo = db.db('cs372');
+		var credentials = { uid: username, pwd: password };
+		dbo.collection('user').insertOne(credentials, function (err, res) {
+			if (err) throw err;
+			console.log('>> 1 account inserted.');
+			db.close();
+		});
+	});
 });
 
 app.get('/', (req, res) => {
