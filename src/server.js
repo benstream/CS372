@@ -49,13 +49,14 @@ app.post('/registrationreq', (req, res) => {
 	var password = req.body.pwd;
 	var email = req.body.email;
 
+	
 	console.log(`\n--- CREDENTIALS ---`);
 	console.log(`Plain Text Email: ${email}`);
 	console.log(`Plain Text Username: ${username}`);
 	console.log(`Plain Text Password: ${password}`);
 	
 
-	res.send(`Account Registered with Email: ${email} ,Username: ${req.body.uid} & Password: ${req.body.pwd}`);
+	res.send(`Account Registered with Email: ${email} ,Username: ${username} & Password: ${password}`);
 
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
@@ -65,7 +66,15 @@ app.post('/registrationreq', (req, res) => {
 			if (err) throw err;
 			console.log(result);
 			db.close();
+
 		});
+			var user = { email: email, uid: username, pwd: password };
+			dbo.collection("customers").insertOne(user, function (err, res) {
+				if (err) throw err;
+				console.log("1 document inserted");
+				db.close();
+			});
+		
 	});
 
 });
