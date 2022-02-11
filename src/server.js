@@ -12,7 +12,7 @@ const app = express();
 var MongoClient = require('mongodb').MongoClient;
 var url = 'mongodb://127.0.0.1:27017/';
 
-// ⚠️ User-specfic database & server connections.
+// ⚠️ User-specfic database & server connections:
 const projDB = 'cs372'; 
 const projTbl = 'user';
 
@@ -21,7 +21,6 @@ const port = 8080;
 
 app.use(parser.urlencoded({ extended: true }));
 
-// TODO: Add salting and hashing with bcrypt.
 app.post('/login', (req, res) => {
 	var username = req.body.uid;
 	var password = req.body.pwd;
