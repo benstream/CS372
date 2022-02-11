@@ -51,43 +51,27 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/registrationreq', (req, res) => {
-	var username = req.body.uid;
-	var password = req.body.pwd; // TODO: hash the password here
-	var email = req.body.email;
-
-	console.log(`\n--- CREDENTIALS ---`);
-	console.log(`Plain Text Email: ${email}`);
-	console.log(`Plain Text Username: ${username}`);
-	console.log(`Plain Text Password: ${password}`);
-
-	res.send(
-		`Account Registered with Email: ${email} -- Username: ${username} -- Password: ${password}`
-	);
-
-	MongoClient.connect(url, function (err, db) {
-		if (err) throw err;
-		var dbo = db.db(projDB);
-		//var boolUser = dbo.collection(projTbl).findOne({ uid: username });
-		//if (boolUser.) {
-
-		//	console.log("Username Exists already");
-		//	db.close();
-		//}
-		//else {
-		var user = { email: email, uid: username, pwd: password };
-		dbo.collection(projTbl).insertOne(user, function (err, res) {
-			if (err) throw err;
-			console.log('>> 1 account inserted.');
-			db.close();
+	bcrypt.genSalt(saltRounds, function (err, salt) {
+		bcrypt.hash(req.body.pwd, salt, function (err, hash) {
+			MongoClient.connect(url, function (err, db) {
+				if (err) throw err;
+				var dbo = db.db(projDB);
+				var credentials = { email: req.body.email, uid: req.body.uid, pwd: hash };
+				dbo.collection(projTbl).insertOne(credentials, function (err, res) {
+					if (err) throw err;
+					console.log('\n>> 1 account inserted.');
+					db.close();
+				});
+				res.redirect('/'); // TODO: Redirect to registration success page.
+			});
 		});
-		//}
 	});
 });
 
 app.post('/passwordreset', (req, res) => {
 	var username = req.body.uid;
-	var newPassword = req.body.pwd; // TODO: hash the password here
-	// -> query username, if true, replace old hashed password with new hashed password
+	var newPassword = req.body.pwd;
+	// TODO: query username, if true, replace old hashed password with new hashed password
 });
 
 app.get('/', (req, res) => {
