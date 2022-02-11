@@ -27,12 +27,23 @@ app.use(parser.urlencoded({ extended: true }));
 app.post('/login', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
-		var dbo = db.db(projDB);
-		dbo.collection(projTbl).findOne({ uid: req.body.uid }, function (err, result) {
-			if (err) throw err;
-			console.log(result);
-			db.close();
-		});
+		db.db(projDB)
+			.collection(projTbl)
+			.find({ uid: req.body.uid })
+			.toArray((err, user) => {
+				if (err) throw err;
+				if (!user[0]) {
+					res.redirect('/failure');
+				} else {
+					let verification = bcrypt.compareSync(req.body.pwd, user[0].pwd);
+					if (verification == false) {
+						res.redirect('/failure');
+					} else {
+						res.redirect('/success');
+					}
+				}
+				db.close();
+			});
 	});
 });
 
@@ -41,14 +52,15 @@ app.post('/registrationreq', (req, res) => {
 		bcrypt.hash(req.body.pwd, salt, function (err, hash) {
 			MongoClient.connect(url, function (err, db) {
 				if (err) throw err;
-				var dbo = db.db(projDB);
 				var credentials = { email: req.body.email, uid: req.body.uid, pwd: hash };
-				dbo.collection(projTbl).insertOne(credentials, function (err, res) {
-					if (err) throw err;
-					console.log('\n>> 1 account inserted.');
-					db.close();
-				});
-				res.redirect('/'); // TODO: Redirect to registration success page.
+				db.db(projDB)
+					.collection(projTbl)
+					.insertOne(credentials, function (err, res) {
+						if (err) throw err;
+						console.log('\n>> 1 account inserted.');
+						db.close();
+					});
+				res.redirect('/');
 			});
 		});
 	});
@@ -57,7 +69,6 @@ app.post('/registrationreq', (req, res) => {
 app.post('/passwordreset', (req, res) => {
 	var username = req.body.uid;
 	var newPassword = req.body.pwd;
-	// TODO: query username, if true, replace old hashed password with new hashed password
 });
 
 app.get('/', (req, res) => {
