@@ -47,23 +47,27 @@ app.post('/login', (req, res) => {
 app.post('/registrationreq', (req, res) => {
 	var username = req.body.uid;
 	var password = req.body.pwd;
+	var email = req.body.email;
 
 	console.log(`\n--- CREDENTIALS ---`);
+	console.log(`Plain Text Email: ${email}`);
 	console.log(`Plain Text Username: ${username}`);
 	console.log(`Plain Text Password: ${password}`);
+	
 
-	res.send(`Username: ${req.body.uid} & Password: ${req.body.pwd}`);
+	res.send(`Account Registered with Email: ${email} ,Username: ${req.body.uid} & Password: ${req.body.pwd}`);
 
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
 		var dbo = db.db(projDB);
-		var credentials = { uid: username, pwd: password };
-		dbo.collection(projTbl).insertOne(credentials, function (err, res) {
+		var query = { username: username };
+		dbo.collection("Users").find(query).toArray(function (err, result) {
 			if (err) throw err;
-			console.log('>> 1 account inserted.');
+			console.log(result);
 			db.close();
 		});
 	});
+
 });
 
 app.get('/', (req, res) => {
