@@ -3,19 +3,23 @@
 // Solomon Himelbloom
 // 2022-01-30
 
-var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://127.0.0.1:27017/';
-
 const express = require('express');
 const parser = require('body-parser');
 const bcrypt = require('bcrypt');
 
 const app = express();
 
-app.use(parser.urlencoded({ extended: true }));
+var MongoClient = require('mongodb').MongoClient;
+var url = 'mongodb://127.0.0.1:27017/';
+
+// ⚠️ User-specfic database & server connections.
+const projDB = 'cs372'; 
+const projTbl = 'user';
 
 const hostname = '127.0.0.1';
 const port = 8080;
+
+app.use(parser.urlencoded({ extended: true }));
 
 // TODO: Add salting and hashing with bcrypt.
 app.post('/login', (req, res) => {
@@ -30,9 +34,9 @@ app.post('/login', (req, res) => {
 
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
-		var dbo = db.db('cs372');
+		var dbo = db.db(projDB);
 		var credentials = { uid: username, pwd: password };
-		dbo.collection('user').insertOne(credentials, function (err, res) {
+		dbo.collection(projTbl).insertOne(credentials, function (err, res) {
 			if (err) throw err;
 			console.log('>> 1 account inserted.');
 			db.close();

@@ -6,4 +6,4 @@
 - Install relevant packages with `npm install`.
 
 # MongoDB
-- Database: `cs372`
+- Database: `cs372` → `user`
