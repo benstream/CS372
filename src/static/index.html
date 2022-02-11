@@ -1,33 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-	<title>Login Page</title>
-	<!-- <link rel="stylesheet" href="style.css" /> -->
-</head>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Login Page</title>
+		<!-- <link rel="stylesheet" href="style.css" /> -->
+	</head>
 
-<body>
-	<h1>Welcome to CS 372. 🚀</h1>
-</body>
+	<body>
+		<h1>Welcome to CS 372. 🚀</h1>
+	</body>
 
-<form action="http://localhost:8080/login" method="POST">
-	<div>
-		<label for="username">Username:</label>
-		<input type="text" name="uid" />
-	</div>
-	<div>
-		<label for="pass">Password:</label>
-		<input type="password" name="pwd" required />
-	</div>
-	<br>
-	<a href="/forgotpassword">Forgot Password</a>
-	<strong>&nbsp</strong>
-	<input type="submit" value="Sign in" />
-</form>
-<p>Don't have an account? <a href="/registration">Register here</a>.</p>
-
-
-
+	<form action="http://localhost:8080/login" method="POST">
+		<div>
+			<label for="username">Username:</label>
+			<input type="text" name="uid" />
+		</div>
+		<div>
+			<label for="pass">Password:</label>
+			<input type="password" name="pwd" required />
+		</div>
+		<br />
+		<a href="/forgotpassword">Forgot password?</a>
+		<strong>&nbsp;</strong>
+		<input type="submit" value="Sign in" />
+	</form>
+	<p>Don't have an account? <a href="/registration">Register here</a>.</p>
 </html>
