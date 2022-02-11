@@ -4,15 +4,19 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-		<title>Login Page</title>
+		<title>Registration Page</title>
 		<!-- <link rel="stylesheet" href="style.css" /> -->
 	</head>
 
 	<body>
-		<h1>Welcome to CS 372. 🚀</h1>
+		<h1>Registration</h1>
 	</body>
 
-	<form action="http://localhost:8080/login" method="POST">
+	<form action="http://localhost:8080/registration" method="POST">
+		<div>
+			<label for="email">Email:</label>
+			<input type="text" name="email" />
+		</div>
 		<div>
 			<label for="username">Username:</label>
 			<input type="text" name="uid" />
@@ -21,7 +25,10 @@
 			<label for="pass">Password:</label>
 			<input type="password" name="pwd" required />
 		</div>
-		<input type="submit" value="Sign in" />
+		<div>
+			<label for="pass"> Confirm Password:</label>
+			<input type="password" name="pwd" required />
+		</div>
+		<input type="submit" value="Register Now" />
 	</form>
-	<a href="/registration">Registration</a>
 </html>

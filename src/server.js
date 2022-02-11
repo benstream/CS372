@@ -48,6 +48,10 @@ app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/static/index.html');
 });
 
+app.get('/registration', (req, res) => {
+	res.sendFile(__dirname + '/static/registration.html');
+});
+
 app.listen(port, hostname, () => {
 	console.log(`Server running at http://${hostname}:${port}/`);
 });
