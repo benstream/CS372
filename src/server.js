@@ -61,15 +61,8 @@ app.post('/registrationreq', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
 		var dbo = db.db(projDB);
-		var query = { username: username };
-		dbo.collection("Users").find(query).toArray(function (err, result) {
-			if (err) throw err;
-			console.log(result);
-			db.close();
-
-		});
-			var user = { email: email, uid: username, pwd: password };
-			dbo.collection("customers").insertOne(user, function (err, res) {
+		var user = { email: email, uid: username, pwd: password };
+		dbo.collection(projTbl).insertOne(user, function (err, res) {
 				if (err) throw err;
 				console.log("1 document inserted");
 				db.close();
