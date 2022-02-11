@@ -61,20 +61,20 @@ app.post('/registrationreq', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
 		var dbo = db.db(projDB);
-		if (dbo.collection(projTbl).find({ uid: { $eq: username } }.count())) {
+		//var boolUser = dbo.collection(projTbl).findOne({ uid: username });
+		//if (boolUser.) {
 
-			console.log("Username Exists already");
-			db.close();
-
-		}
-		else {
+		//	console.log("Username Exists already");
+		//	db.close();
+		//}
+		//else {
 			var user = { email: email, uid: username, pwd: password };
 			dbo.collection(projTbl).insertOne(user, function (err, res) {
 				if (err) throw err;
 				console.log("1 document inserted");
 				db.close();
 			});
-		}
+		//}
 		
 	});
 
