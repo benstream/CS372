@@ -46,7 +46,7 @@ app.post('/login', (req, res) => {
 
 app.post('/registrationreq', (req, res) => {
 	var username = req.body.uid;
-	var password = req.body.pwd;
+	var password = req.body.pwd; //hash the passwordd here
 	var email = req.body.email;
 
 	
@@ -61,7 +61,7 @@ app.post('/registrationreq', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
 		var dbo = db.db(projDB);
-		if (dbo.collection(projTbl).find({ uid: { $eq: username } })) {
+		if (dbo.collection(projTbl).find({ uid: { $eq: username } }.count())) {
 
 			console.log("Username Exists already");
 			db.close();
@@ -80,12 +80,23 @@ app.post('/registrationreq', (req, res) => {
 
 });
 
+app.post('/passwordreset', (req, res) => {
+	var username = req.body.uid;
+	var newPassword = req.body.pwd; // hash the password here
+	//query username, if true, replace old hashed password with new hashed password
+
+});
+
 app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/static/index.html');
 });
 
 app.get('/registration', (req, res) => {
 	res.sendFile(__dirname + '/static/registration.html');
+});
+
+app.get('/forgotpassword', (req, res) => {
+	res.sendFile(__dirname + '/static/forgotpass.html');
 });
 
 app.listen(port, hostname, () => {

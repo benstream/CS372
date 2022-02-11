@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Registration Page</title>
+		<!-- <link rel="stylesheet" href="style.css" /> -->
+	</head>
+
+	<body>
+		<h1>Password Reset</h1>
+	</body>
+
+	<form action="http://localhost:8080/passwordreset" method="POST">
+		<div>
+			<label for="username">Username:</label>
+			<input type="text" name="uid" />
+		</div>
+		<div>
+			<label for="pass">New Password:</label>
+			<input type="password" name="pwd" required />
+		</div>
+		<div>
+			<label for="pass"> Confirm New Password:</label>
+			<input type="password" name="pwdconfirm" required />
+		</div>
+		<input type="submit" value="Confirm Change" />
+	</form>
+</html>
