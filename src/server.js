@@ -25,26 +25,12 @@ const saltRounds = 10;
 app.use(parser.urlencoded({ extended: true }));
 
 app.post('/login', (req, res) => {
-	var username = req.body.uid;
-	var password = req.body.pwd;
-
-	// TODO: Login control flow.
-	// res.redirect('/success');
-	// res.redirect('/failure');
-
-	console.log(`\n--- CREDENTIALS ---`);
-	console.log(`Plain Text Username: ${username}`);
-	console.log(`Plain Text Password: ${password}`);
-
-	res.send(`Username: ${req.body.uid} -- Password: ${req.body.pwd}`);
-
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
 		var dbo = db.db(projDB);
-		var credentials = { uid: username, pwd: password };
-		dbo.collection(projTbl).insertOne(credentials, function (err, res) {
+		dbo.collection(projTbl).findOne({ uid: req.body.uid }, function (err, result) {
 			if (err) throw err;
-			console.log('>> 1 account inserted.');
+			console.log(result);
 			db.close();
 		});
 	});
