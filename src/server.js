@@ -53,16 +53,14 @@ app.post('/registrationreq', (req, res) => {
 			MongoClient.connect(url, function (err, db) {
 				if (err) throw err;
 				var credentials = { email: req.body.email, uid: req.body.uid, pwd: hash };
-
-				// Check if account already exists:
 				db.db(projDB)
 					.collection(projTbl)
 					.find({ uid: req.body.uid })
 					.toArray((err, user) => {
 						if (err) throw err;
 						if (user[0]) {
-							console.log('\n>> Account Exists.');
 							db.close();
+							res.redirect('/exists');
 						} else {
 							db.db(projDB)
 								.collection(projTbl)
@@ -102,6 +100,10 @@ app.get('/success', (req, res) => {
 
 app.get('/failure', (req, res) => {
 	res.sendFile(__dirname + '/static/failure.html');
+});
+
+app.get('/exists', (req, res) => {
+	res.sendFile(__dirname + '/static/exists.html');
 });
 
 app.listen(port, hostname, () => {
