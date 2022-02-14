@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Registration Page</title>
+	</head>
+
+	<body>
+		<h1>❌ Account already exists! Please try again.</h1>
+		<h3 id="idle-alert"></h3>
+	</body>
+
+	<script>
+		setTimeout(function () {
+			inactivity('🔙 Redirecting to login page...');
+			setTimeout(function () {
+				location.href = '/';
+			}, 2000);
+		}, 3000);
+
+		function inactivity(value) {
+			document.getElementById('idle-alert').innerHTML = value;
+		}
+
+		function redirect(destination) {
+			location.href = destination;
+		}
+	</script>
+</html>
