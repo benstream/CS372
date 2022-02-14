@@ -48,55 +48,55 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/registrationreq', (req, res) => {
-	// bcrypt.genSalt(saltRounds, function (err, salt) {
-	// 	bcrypt.hash(req.body.pwd, salt, function (err, hash) {
-	MongoClient.connect(url, function (err, db) {
-		if (err) throw err;
-		var credentials = { email: req.body.email, uid: req.body.uid, pwd: req.body.pwd };
-		db.db(projDB)
-			.collection(projTbl)
-			.find({ uid: req.body.uid })
-			.toArray((err, user) => {
+	bcrypt.genSalt(saltRounds, function (err, salt) {
+		bcrypt.hash(req.body.pwd, salt, function (err, hash) {
+			MongoClient.connect(url, function (err, db) {
 				if (err) throw err;
-				if (user[0]) {
-					db.close();
-					res.redirect('/exists');
-				} else {
-					db.db(projDB)
-						.collection(projTbl)
-						.insertOne(credentials, function (err, res) {
-							if (err) throw err;
-							console.log('\n>> 1 account inserted.');
+				var credentials = { email: req.body.email, uid: req.body.uid, pwd: hash };
+				db.db(projDB)
+					.collection(projTbl)
+					.find({ uid: req.body.uid })
+					.toArray((err, user) => {
+						if (err) throw err;
+						if (user[0]) {
 							db.close();
-						});
-					res.redirect('/');
-				}
+							res.redirect('/exists');
+						} else {
+							db.db(projDB)
+								.collection(projTbl)
+								.insertOne(credentials, function (err, res) {
+									if (err) throw err;
+									console.log('\n>> 1 account inserted.');
+									db.close();
+								});
+							res.redirect('/');
+						}
+					});
 			});
+		});
 	});
-	// 	});
-	// });
 });
 
 app.post('/passwordreset', (req, res) => {
-	// bcrypt.genSalt(saltRounds, function (err, salt) {
-	// 	bcrypt.hash(req.body.pwd, salt, function (err, newHash) {
-	MongoClient.connect(url, function (err, db) {
-		if (err) throw err;
-		db.db(projDB)
-			.collection(projTbl)
-			.findOneAndUpdate(
-				{ uid: req.body.uid },
-				{ $set: { pwd: req.body.pwd } },
-				function (err, res) {
-					if (err) throw err;
-					console.log('\n>> User has been updated!');
-					db.close();
-				}
-			);
-		res.redirect('/');
+	bcrypt.genSalt(saltRounds, function (err, salt) {
+		bcrypt.hash(req.body.pwd, salt, function (err, newHash) {
+			MongoClient.connect(url, function (err, db) {
+				if (err) throw err;
+				db.db(projDB)
+					.collection(projTbl)
+					.findOneAndUpdate(
+						{ uid: req.body.uid },
+						{ $set: { pwd: newHash } },
+						function (err, res) {
+							if (err) throw err;
+							console.log('\n>> User has been updated!');
+							db.close();
+						}
+					);
+				res.redirect('/');
+			});
+		});
 	});
-	// 	});
-	// });
 });
 
 app.get('/', (req, res) => {
