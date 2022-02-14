@@ -10,5 +10,23 @@
 
 	<body>
 		<h1>❌ Login failed! Please try again.</h1>
+		<h3 id="idle-alert"></h3>
 	</body>
+
+	<script>
+		setTimeout(function () {
+			inactivity('🔙 Redirecting to login page...');
+			setTimeout(function () {
+				location.href = '/';
+			}, 2000);
+		}, 3000);
+
+		function inactivity(value) {
+			document.getElementById('idle-alert').innerHTML = value;
+		}
+
+		function redirect(destination) {
+			location.href = destination;
+		}
+	</script>
 </html>
