@@ -5,10 +5,27 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 		<title>Login Page</title>
-		<!-- <link rel="stylesheet" href="style.css" /> -->
 	</head>
 
 	<body>
 		<h1>❌ Login failed! Please try again.</h1>
+		<h3 id="idle-alert"></h3>
 	</body>
+
+	<script>
+		setTimeout(function () {
+			inactivity('🔙 Redirecting to login page...');
+			setTimeout(function () {
+				location.href = '/';
+			}, 2000);
+		}, 3000);
+
+		function inactivity(value) {
+			document.getElementById('idle-alert').innerHTML = value;
+		}
+
+		function redirect(destination) {
+			location.href = destination;
+		}
+	</script>
 </html>
