@@ -54,25 +54,26 @@ app.post('/registrationreq', (req, res) => {
 				if (err) throw err;
 				var credentials = { email: req.body.email, uid: req.body.uid, pwd: hash };
 
-				var bool = db.db(projDB).collection(projTbl).find({ "uid": req.body.uid }).count()>0;
-				if (bool)
-				{
-					console.log('\n>> Account Exists.')
-					db.close();
-				}
-
-				else db.db(projDB)
-					.collection(projTbl)
-					.insertOne(credentials, function (err, res) {
-						if (err) throw err;
-						console.log('\n>> 1 account inserted.');
+				// Check if account already exists:
+				db.db(projDB).collection(projTbl).find({ uid: req.body.uid }).toArray((err, user) => {
+					if (err) throw err;
+					if (user[0]) {
+						console.log('\n>> Account Exists.');
 						db.close();
-					});
-				res.redirect('/');
+					} else {
+						db.db(projDB).collection(projTbl).insertOne(credentials, function (err, res) {
+							if (err) throw err;
+							console.log('\n>> 1 account inserted.');
+							db.close();
+							res.redirect('/');
+						});
+					}
+				});
 			});
 		});
 	});
 });
+
 
 app.post('/passwordreset', (req, res) => {
 	var username = req.body.uid;
