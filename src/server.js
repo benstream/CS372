@@ -70,8 +70,8 @@ app.post('/registrationreq', (req, res) => {
 									if (err) throw err;
 									console.log('\n>> 1 account inserted.');
 									db.close();
-									res.redirect('/');
 								});
+							res.redirect('/');
 						}
 					});
 			});
