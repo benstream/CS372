@@ -78,8 +78,34 @@ app.post('/registrationreq', (req, res) => {
 });
 
 app.post('/passwordreset', (req, res) => {
-	var username = req.body.uid;
-	var newPassword = req.body.pwd;
+	bcrypt.genSalt(saltRounds, function (err, salt) {
+		bcrypt.hash(req.body.pwd, salt, function (err, newHash) {
+			MongoClient.connect(url, function (err, db) {
+				if (err) throw err;
+				// var reset = { uid: req.body.uid, pwd: hash };
+				db.db(projDB)
+					.collection(projTbl)
+					.find({ uid: req.body.uid })
+					.toArray((err, user) => {
+						if (err) throw err;
+						if (user[0]) {
+							db.db(projDB)
+								.collection(projTbl)
+								.replaceOne({ uid: req.body.uid }, { pwd: newHash }, function (err, res) {
+									if (err) throw err;
+									console.log('\n>> 1 account updated.');
+									db.close();
+								});
+							res.redirect('/');
+						} else {
+							console.log('\n(!) Account does not exist!');
+							db.close();
+							res.redirect('/');
+						}
+					});
+			});
+		});
+	});
 });
 
 app.get('/', (req, res) => {
