@@ -20,7 +20,7 @@ const projTbl = 'user';
 const hostname = '127.0.0.1';
 const port = 8080;
 
-const saltRounds = 10;
+const saltRounds = 12;
 
 app.use(parser.urlencoded({ extended: true }));
 
