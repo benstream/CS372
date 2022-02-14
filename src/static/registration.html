@@ -23,11 +23,21 @@
 		</div>
 		<div>
 			<label for="pass">Password:</label>
-			<input type="password" name="pwd" required />
+			<input type="password" name="pwd" id="pwd" required />
 		</div>
 		<div>
 			<label for="pass">Confirm Password:</label>
-			<input type="password" name="pwdconfirm" required />
+			<input type="password" name="pwdconfirm"  id="pwdconfirm" oninput= "check(this)" required />
+			<script language='javascript' type='text/javascript' >
+				function check(input) {
+					if (input.value != document.getElementById('pwd').value) {
+						input.setCustomValidity('Password Must be Matching.');
+					} else {
+						// input is valid -- reset the error message
+						input.setCustomValidity('');
+					}
+				}
+			</script>
 		</div>
 		<br />
 		<input type="submit" value="Register Now" />
