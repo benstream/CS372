@@ -4,19 +4,19 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-		<title>Login Page</title>
+		<title>Registration Page</title>
 	</head>
 
 	<body>
-		<h1>❌ Login failed! Please try again.</h1>
+		<h1>❌ Account already exists! Please try again.</h1>
 		<h3 id="idle-alert"></h3>
 	</body>
 
 	<script>
 		setTimeout(function () {
-			inactivity('🔙 Redirecting to login page...');
+			inactivity('🔙 Redirecting to registration page...');
 			setTimeout(function () {
-				location.href = '/';
+				location.href = '/registration';
 			}, 2000);
 		}, 3000);
 
