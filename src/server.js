@@ -53,7 +53,15 @@ app.post('/registrationreq', (req, res) => {
 			MongoClient.connect(url, function (err, db) {
 				if (err) throw err;
 				var credentials = { email: req.body.email, uid: req.body.uid, pwd: hash };
-				db.db(projDB)
+
+				var bool = db.db(projDB).collection(projTbl).find({ "uid": req.body.uid }).count()>0;
+				if (bool)
+				{
+					console.log('\n>> Account Exists.')
+					db.close();
+				}
+
+				else db.db(projDB)
 					.collection(projTbl)
 					.insertOne(credentials, function (err, res) {
 						if (err) throw err;
