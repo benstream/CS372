@@ -5,7 +5,8 @@
 	"main": "app.js",
 	"scripts": {
 		"dev": "nodemon server.js",
-		"start": "node server.js"
+		"start": "node server.js",
+		"prettier": "prettier --write ."
 	},
 	"repository": {
 		"type": "git",

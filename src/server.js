@@ -84,15 +84,11 @@ app.post('/passwordreset', (req, res) => {
 				if (err) throw err;
 				db.db(projDB)
 					.collection(projTbl)
-					.findOneAndUpdate(
-						{ uid: req.body.uid },
-						{ $set: { pwd: newHash } },
-						function (err, res) {
-							if (err) throw err;
-							console.log('\n>> User has been updated!');
-							db.close();
-						}
-					);
+					.findOneAndUpdate({ uid: req.body.uid }, { $set: { pwd: newHash } }, function (err, res) {
+						if (err) throw err;
+						console.log('\n>> User has been updated!');
+						db.close();
+					});
 				res.redirect('/');
 			});
 		});
