@@ -3,7 +3,15 @@
 // Solomon Himelbloom
 // 2022-01-30
 
+// TOOD:
+// - Assign Express to the session (cookie)
+// - Attach the session to website middleware
+// - Show pages to the local account based on user roles
+// - Update the following user to the new database access system
+// - Specific pages that are only accessible by editors & admins
+
 const express = require('express');
+const session = require('express-session');
 const parser = require('body-parser');
 const bcrypt = require('bcrypt');
 const { redirect } = require('express/lib/response');
@@ -23,6 +31,13 @@ const port = 8080;
 const saltRounds = 12;
 
 app.use(parser.urlencoded({ extended: true }));
+
+// Session Management
+app.use(session({
+	secret: 'keyboard cat',
+	resave: false,
+	saveUninitialized: false
+}));
 
 app.post('/login', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
@@ -101,7 +116,13 @@ app.post('/passwordreset', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-	res.sendFile(__dirname + '/static/index.html');
+	req.session.isAuth = true;
+	console.log(req.session);
+	console.log(req.session.id);
+	res.send("Hello, CS 372 Sessions!");
+
+	// FIXME: Index page should be accessible to all users.
+	// res.sendFile(__dirname + '/static/index.html');
 });
 
 app.get('/registration', (req, res) => {
