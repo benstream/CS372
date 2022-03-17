@@ -52,7 +52,12 @@ app.post('/registrationreq', (req, res) => {
 		bcrypt.hash(req.body.pwd, salt, function (err, hash) {
 			MongoClient.connect(url, function (err, db) {
 				if (err) throw err;
-				var credentials = { email: req.body.email, uid: req.body.uid, pwd: hash };
+				var credentials = {
+					email: req.body.email,
+					uid: req.body.uid,
+					pwd: hash,
+					access: req.body.access
+				};
 				db.db(projDB)
 					.collection(projTbl)
 					.find({ uid: req.body.uid })
