@@ -2,7 +2,7 @@
 // Benjamin Stream
 // Solomon Himelbloom
 // 2022-01-30
-
+// 
 // TOOD:
 // - Assign Express to the session (cookie)
 // - Attach the session to website middleware
@@ -12,6 +12,8 @@
 
 const express = require('express');
 const session = require('express-session');
+// const MongoDBStore = require('connect-mongodb-session')(session);
+// TODO: Design decision for vanilla MongoDB vs. Mongoose.
 const parser = require('body-parser');
 const bcrypt = require('bcrypt');
 const { redirect } = require('express/lib/response');
@@ -61,6 +63,8 @@ app.post('/login', (req, res) => {
 			});
 	});
 });
+
+// TODO: Logout functionality.
 
 app.post('/registrationreq', (req, res) => {
 	bcrypt.genSalt(saltRounds, function (err, salt) {
@@ -119,10 +123,7 @@ app.get('/', (req, res) => {
 	req.session.isAuth = true;
 	console.log(req.session);
 	console.log(req.session.id);
-	res.send("Hello, CS 372 Sessions!");
-
-	// FIXME: Index page should be accessible to all users.
-	// res.sendFile(__dirname + '/static/index.html');
+	res.sendFile(__dirname + '/static/index.html');
 });
 
 app.get('/registration', (req, res) => {
