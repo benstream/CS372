@@ -119,6 +119,14 @@ app.get('/exists', (req, res) => {
 	res.sendFile(__dirname + '/static/exists.html');
 });
 
+app.get('/content', (req, res) => {
+	res.sendFile(__dirname + '/video/content.html');
+});
+
+app.get('/table', (req, res) => {
+	res.sendFile(__dirname + '/review/table.html');
+});
+
 app.listen(port, hostname, () => {
 	console.log(`Server running at http://${hostname}:${port}/`);
 });

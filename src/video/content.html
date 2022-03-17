@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Video Player</title>
+	</head>
+
+	<body>
+		<h1>Movie Application 🎬</h1>
+
+		<div class="topnav">
+			<button>< Previous</button>
+			<button onclick="window.location.href = 'https://www.youtube.com/watch?v=mBEfgsEqsc8'">
+				Watch on YouTube
+			</button>
+			<button>Next ></button>
+			<strong>&nbsp;</strong>
+			<input type="text" placeholder="Search..." />
+		</div>
+
+		<br />
+
+		<div class="video-player">
+			<!-- UAF YouTube Video -->
+
+			<iframe
+				width="560"
+				height="315"
+				src="https://www.youtube.com/embed/mBEfgsEqsc8"
+				title="YouTube video player"
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+				allowfullscreen
+			></iframe>
+
+			<br />
+
+			<!-- 'Big Buck Bunny' licensed under CC 3.0 by the Blender foundation. Hosted by archive.org -->
+			<!-- Poster from peach.blender.org -->
+			<video
+				controls
+				src="https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4"
+				poster="https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217"
+				width="620"
+			>
+				Sorry, your browser doesn't support embedded videos, but don't worry, you can
+				<a href="https://archive.org/details/BigBuckBunny_124">download it</a>
+				and watch it with your favorite video player!
+			</video>
+		</div>
+
+		<div class="rating">
+			<div class="rating_stars">⭐️⭐️⭐️⭐️⭐️</div>
+			<div class="rating_count">(123)</div>
+		</div>
+		<hr />
+
+		<div class="review">
+			<h3>Review</h3>
+			<p>
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+				labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+				laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+				voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+				cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			</p>
+
+			<textarea
+				name="review"
+				id="review"
+				cols="30"
+				rows="10"
+				placeholder="Leave a review..."
+			></textarea>
+
+			<br />
+
+			<button>Submit</button>
+		</div>
+	</body>
+</html>
