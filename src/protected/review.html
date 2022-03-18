@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Table Aggregation</title>
+	</head>
+
+	<style>
+		table,
+		th,
+		td {
+			border: 1px solid;
+		}
+
+		/* Modified from source: https://github.com/mukulkant/Star-rating-using-pure-css */
+
+		.rate {
+			float: left;
+			height: 46px;
+			padding: 0 10px;
+		}
+		.rate:not(:checked) > input {
+			position: absolute;
+			top: -9999px;
+		}
+		.rate:not(:checked) > label {
+			float: right;
+			width: 1em;
+			overflow: hidden;
+			white-space: nowrap;
+			cursor: pointer;
+			font-size: 30px;
+			color: #ccc;
+		}
+		.rate:not(:checked) > label:before {
+			content: '★ ';
+		}
+		.rate > input:checked ~ label {
+			color: #ffc700;
+		}
+		.rate:not(:checked) > label:hover,
+		.rate:not(:checked) > label:hover ~ label {
+			color: #deb217;
+		}
+		.rate > input:checked + label:hover,
+		.rate > input:checked + label:hover ~ label,
+		.rate > input:checked ~ label:hover,
+		.rate > input:checked ~ label:hover ~ label,
+		.rate > label:hover ~ input:checked ~ label {
+			color: #c59b08;
+		}
+	</style>
+
+	<body>
+		<h1>Movie Reviews 🍿</h1>
+
+		<table>
+			<tr>
+				<th>Movie</th>
+				<th>Likes</th>
+				<th>Ratings</th>
+			</tr>
+			<tr>
+				<td>Example #1</td>
+				<td>( 👍 / 👎 )</td>
+				<td>⭐️</td>
+			</tr>
+			<tr>
+				<td>Example #2</td>
+				<td>( 👍 / 👎 )</td>
+				<td>⭐️⭐️</td>
+			</tr>
+			<tr>
+				<td>Example #3</td>
+				<td>( 👍 / 👎 )</td>
+				<td>⭐️⭐️⭐️</td>
+			</tr>
+			<tr>
+				<td>Example #4</td>
+				<td>( 👍 / 👎 )</td>
+				<td>⭐️⭐️⭐️⭐️</td>
+			</tr>
+			<tr>
+				<td>Example #5</td>
+				<td>( 👍 / 👎 )</td>
+				<td>⭐️⭐️⭐️⭐️⭐️</td>
+			</tr>
+		</table>
+
+		<br />
+		<form name="review">
+			<textarea
+				name="review"
+				id="review"
+				cols="30"
+				rows="10"
+				placeholder="Leave a review..."
+			></textarea>
+
+			<br />
+
+			<div class="rate">
+				<input type="radio" id="star5" name="rate" value="5" />
+				<label for="star5" title="text">five</label>
+				<input type="radio" id="star4" name="rate" value="4" />
+				<label for="star4" title="text">four</label>
+				<input type="radio" id="star3" name="rate" value="3" />
+				<label for="star3" title="text">three</label>
+				<input type="radio" id="star2" name="rate" value="2" />
+				<label for="star2" title="text">two</label>
+				<input type="radio" id="star1" name="rate" value="1" />
+				<label for="star1" title="text">one</label>
+			</div>
+
+			<br />
+
+			<button>Submit</button>
+		</form>
+	</body>
+</html>

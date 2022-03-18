@@ -120,11 +120,15 @@ app.get('/exists', (req, res) => {
 });
 
 app.get('/content', (req, res) => {
-	res.sendFile(__dirname + '/video/content.html');
+	res.sendFile(__dirname + '/protected/content.html');
 });
 
-app.get('/table', (req, res) => {
-	res.sendFile(__dirname + '/review/table.html');
+app.get('/recommendation', (req, res) => {
+	res.sendFile(__dirname + '/protected/recommendation.html');
+});
+
+app.get('/review', (req, res) => {
+	res.sendFile(__dirname + '/protected/review.html');
 });
 
 app.listen(port, hostname, () => {
