@@ -2,8 +2,8 @@
 // Benjamin Stream
 // Solomon Himelbloom
 // 2022-01-30
-// 
-// TOOD:
+//
+// TODO:
 // - Assign Express to the session (cookie)
 // - Attach the session to website middleware
 // - Show pages to the local account based on user roles
@@ -35,11 +35,13 @@ const saltRounds = 12;
 app.use(parser.urlencoded({ extended: true }));
 
 // Session Management
-app.use(session({
-	secret: 'keyboard cat',
-	resave: false,
-	saveUninitialized: false
-}));
+app.use(
+	session({
+		secret: 'keyboard cat',
+		resave: false,
+		saveUninitialized: false
+	})
+);
 
 app.post('/login', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
