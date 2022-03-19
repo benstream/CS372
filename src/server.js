@@ -12,8 +12,7 @@
 
 const express = require('express');
 const session = require('express-session');
-// const MongoDBStore = require('connect-mongodb-session')(session);
-// TODO: Design decision for vanilla MongoDB vs. Mongoose.
+const MongoDBSession = require("connect-mongodb-session")(session);
 const parser = require('body-parser');
 const bcrypt = require('bcrypt');
 const { redirect } = require('express/lib/response');
@@ -35,11 +34,18 @@ const saltRounds = 12;
 app.use(parser.urlencoded({ extended: true }));
 
 // Session Management
+
+const store = new MongoDBSession({
+	uri: url,
+	collection: "mySessions",
+
+});
 app.use(
 	session({
 		secret: 'keyboard cat',
 		resave: false,
-		saveUninitialized: false
+		saveUninitialized: false,
+		store: store
 	})
 );
 

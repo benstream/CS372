@@ -1,5 +1,6 @@
 // Authenticate Role Middleware
-// Will query the cookie and or server for current user role to allow them to access certain elements
+// Will query the cookie and/or server for current 
+// user role to allow them to access certain elements.
 
 const authRole = (permissions) => {
     return (req, res, next) => {
