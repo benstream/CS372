@@ -12,3 +12,5 @@ const authRole = (permissions) => {
 
     }
 };
+
+module.exports = { authRole };
