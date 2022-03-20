@@ -70,7 +70,9 @@ app.post('/login', (req, res) => {
 						res.redirect('/failure');
 					} else {
 						res.redirect('/success');
-						req.session.isAuth = true;
+
+						//Assigning role to localStorage
+						localStorage.setItem('role', user[0].access);
 					}
 				}
 				db.close();

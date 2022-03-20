@@ -4,7 +4,7 @@
 
 const authRole = (permissions) => {
     return (req, res, next) => {
-        const userRole = req.body.access
+        const userRole = localStorage.getItem(role);
         if(pemissions.includes(userRole)){
             next()
     } else {
