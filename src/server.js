@@ -49,6 +49,11 @@ app.use(
 	})
 );
 
+// FIXME: Add additional fields to session cookie.
+// res.setHeader('Content-Type', 'text/html');
+// res.setHeader('Set-Cookie', 'foo=bar; Path=/; HttpOnly');
+// res.cookie('name', 'test', { domain: 'example.com', path: '/admin', secure: true });
+
 app.post('/login', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
@@ -65,14 +70,13 @@ app.post('/login', (req, res) => {
 						res.redirect('/failure');
 					} else {
 						res.redirect('/success');
+						req.session.isAuth = true;
 					}
 				}
 				db.close();
 			});
 	});
 });
-
-// TODO: Logout functionality.
 
 app.post('/registrationreq', (req, res) => {
 	bcrypt.genSalt(saltRounds, function (err, salt) {
@@ -130,7 +134,7 @@ app.post('/passwordreset', (req, res) => {
 app.get('/', (req, res) => {
 	req.session.isAuth = true;
 	console.log(req.session);
-	console.log(req.session.id);
+	console.log("🍪: " + req.session.id);
 	res.sendFile(__dirname + '/static/index.html');
 });
 

@@ -8,7 +8,7 @@ const authRole = (permissions) => {
         if(pemissions.includes(userRole)){
             next()
     } else {
-        return  res.status(401).json("Insufficent Permissions")
+        return res.status(401).json("Insufficent Permissions")
     }
 
     }
