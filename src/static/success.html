@@ -10,12 +10,19 @@
 	<body>
 		<h1>✅ Login successful.</h1>
 
+		<div class="search">
+			<form action="search" method="GET">
+				<input type="text" name="search" placeholder="Insert a movie to watch..." />
+				<button type="submit">Search</button>
+			</form>
+		</div>
+
 		<div id="navigation">
 			<ul>
-				<li><a href="http://localhost:8080/content">Movie Experience</a></li>
-				<li><a href="http://localhost:8080/recommendation">Recommendations</a></li>
-				<li><a href="http://localhost:8080/review">Reviews</a></li>
-				<li><a href="http://localhost:8080">Logout</a></li>
+				<li><a href="/content">Movie Experience</a></li>
+				<li><a href="/recommendation">Recommendations</a></li>
+				<li><a href="/review">Reviews</a></li>
+				<li><a href="/">Logout</a></li>
 			</ul>
 		</div>
 
