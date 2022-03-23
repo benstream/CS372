@@ -68,6 +68,8 @@
 		function stopVideo() {
 			player.stopVideo();
 		}
+
+		// TODO: Fetch rating and metadata from database vault.
 	</script>
 
 	<body>
@@ -96,8 +98,20 @@
 				<div class="rating_stars">⭐️⭐️⭐️⭐️⭐️</div>
 				<div class="rating_count">(123)</div>
 			</div>
-			<div id="player"></div>
+
 			<br />
+
+			<div id="player"></div>
+
+			<br />
+
+			<div class="thumbs">
+				<button class="thumbs_up">👍</button>
+				<button class="thumbs_down">👎</button>
+			</div>
+
+			<br />
+
 			<div name="views">
 				<strong>Views:</strong>
 				<div id="CounterVisitor">
@@ -109,31 +123,6 @@
 					<span class="counter-item">4</span>
 				</div>
 			</div>
-		</div>
-
-		<hr />
-
-		<div class="review">
-			<h3>Review</h3>
-			<p>
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-				labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-				laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-				voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-				cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			</p>
-
-			<textarea
-				name="review"
-				id="review"
-				cols="30"
-				rows="10"
-				placeholder="Leave a review..."
-			></textarea>
-
-			<br />
-
-			<button>Submit</button>
 		</div>
 	</body>
 

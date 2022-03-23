@@ -111,12 +111,12 @@ app.post('/addition', (req, res) => {
 
 		db.db(projDB)
 			.collection(projVaultTbl)
-			.find({ uid: req.body.uid })
-			.toArray((err, user) => {
+			.find({ title: req.body.title })
+			.toArray((err, movie) => {
 				if (err) throw err;
-				if (user[0]) {
+				if (movie[0]) {
 					db.close();
-					res.redirect('/exists');
+					res.send('(!) Movie already exists -- please try again.');
 				} else {
 					db.db(projDB)
 						.collection(projVaultTbl)
@@ -141,6 +141,24 @@ app.post('/removal', (req, res) => {
 				console.log('\n>> Movie has been removed!');
 				db.close();
 			});
+		res.redirect('/success');
+	});
+});
+
+app.post('/metadata', (req, res) => {
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+		db.db(projDB)
+			.collection(projVaultTbl)
+			.findOneAndUpdate(
+				{ title: req.body.title },
+				{ $set: { metadata: req.body.metadata } },
+				function (err, res) {
+					if (err) throw err;
+					console.log('\n>> Movie metadata has been updated!');
+					db.close();
+				}
+			);
 		res.redirect('/success');
 	});
 });
