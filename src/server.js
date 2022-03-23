@@ -2,8 +2,17 @@
 // Benjamin Stream
 // Solomon Himelbloom
 // 2022-01-30
+//
+// TODO:
+// - Assign Express to the session (cookie)
+// - Attach the session to website middleware
+// - Show pages to the local account based on user roles
+// - Update the following user to the new database access system
+// - Specific pages that are only accessible by editors & admins
 
 const express = require('express');
+const session = require('express-session');
+const MongoDBSession = require("connect-mongodb-session")(session);
 const parser = require('body-parser');
 const bcrypt = require('bcrypt');
 const { redirect } = require('express/lib/response');
@@ -25,6 +34,27 @@ const saltRounds = 12;
 
 app.use(parser.urlencoded({ extended: true }));
 
+// Session Management
+
+const store = new MongoDBSession({
+	uri: url,
+	collection: "mySessions",
+
+});
+app.use(
+	session({
+		secret: 'keyboard cat',
+		resave: false,
+		saveUninitialized: false,
+		store: store
+	})
+);
+
+// FIXME: Add additional fields to session cookie.
+// res.setHeader('Content-Type', 'text/html');
+// res.setHeader('Set-Cookie', 'foo=bar; Path=/; HttpOnly');
+// res.cookie('name', 'test', { domain: 'example.com', path: '/admin', secure: true });
+
 app.post('/login', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
@@ -41,6 +71,9 @@ app.post('/login', (req, res) => {
 						res.redirect('/failure');
 					} else {
 						res.redirect('/success');
+
+						//Assigning role to localStorage
+						localStorage.setItem('role', user[0].access);
 					}
 				}
 				db.close();
@@ -53,7 +86,12 @@ app.post('/registrationreq', (req, res) => {
 		bcrypt.hash(req.body.pwd, salt, function (err, hash) {
 			MongoClient.connect(url, function (err, db) {
 				if (err) throw err;
-				var credentials = { email: req.body.email, uid: req.body.uid, pwd: hash };
+				var credentials = {
+					email: req.body.email,
+					uid: req.body.uid,
+					pwd: hash,
+					access: req.body.access
+				};
 				db.db(projDB)
 					.collection(projAuthTbl)
 					.find({ uid: req.body.uid })
@@ -164,6 +202,9 @@ app.post('/metadata', (req, res) => {
 });
 
 app.get('/', (req, res) => {
+	req.session.isAuth = true;
+	console.log(req.session);
+	console.log("🍪: " + req.session.id);
 	res.sendFile(__dirname + '/static/index.html');
 });
 
