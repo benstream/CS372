@@ -12,7 +12,7 @@
 
 const express = require('express');
 const session = require('express-session');
-const MongoDBSession = require("connect-mongodb-session")(session);
+const MongoDBSession = require('connect-mongodb-session')(session);
 const parser = require('body-parser');
 const bcrypt = require('bcrypt');
 const { redirect } = require('express/lib/response');
@@ -38,8 +38,7 @@ app.use(parser.urlencoded({ extended: true }));
 
 const store = new MongoDBSession({
 	uri: url,
-	collection: "mySessions",
-
+	collection: 'mySessions'
 });
 app.use(
 	session({
@@ -71,9 +70,8 @@ app.post('/login', (req, res) => {
 						res.redirect('/failure');
 					} else {
 						res.redirect('/success');
-
-						//Assigning role to localStorage
-						localStorage.setItem('role', user[0].access);
+						// Assigning role to localStorage
+						// localStorage.setItem('role', user[0].access);
 					}
 				}
 				db.close();
@@ -204,7 +202,7 @@ app.post('/metadata', (req, res) => {
 app.get('/', (req, res) => {
 	req.session.isAuth = true;
 	console.log(req.session);
-	console.log("🍪: " + req.session.id);
+	console.log('🍪: ' + req.session.id);
 	res.sendFile(__dirname + '/static/index.html');
 });
 
