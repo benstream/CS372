@@ -10,12 +10,13 @@ const { redirect } = require('express/lib/response');
 
 const app = express();
 
+// ⚠️ User-specfic database & server connections:
 var MongoClient = require('mongodb').MongoClient;
 var url = 'mongodb://127.0.0.1:27017/';
 
-// ⚠️ User-specfic database & server connections:
 const projDB = 'cs372';
-const projTbl = 'user';
+const projAuthTbl = 'user';
+const projVaultTbl = 'media';
 
 const hostname = '127.0.0.1';
 const port = 8080;
@@ -28,7 +29,7 @@ app.post('/login', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
 		db.db(projDB)
-			.collection(projTbl)
+			.collection(projAuthTbl)
 			.find({ uid: req.body.uid })
 			.toArray((err, user) => {
 				if (err) throw err;
@@ -54,7 +55,7 @@ app.post('/registrationreq', (req, res) => {
 				if (err) throw err;
 				var credentials = { email: req.body.email, uid: req.body.uid, pwd: hash };
 				db.db(projDB)
-					.collection(projTbl)
+					.collection(projAuthTbl)
 					.find({ uid: req.body.uid })
 					.toArray((err, user) => {
 						if (err) throw err;
@@ -63,7 +64,7 @@ app.post('/registrationreq', (req, res) => {
 							res.redirect('/exists');
 						} else {
 							db.db(projDB)
-								.collection(projTbl)
+								.collection(projAuthTbl)
 								.insertOne(credentials, function (err, res) {
 									if (err) throw err;
 									console.log('\n>> 1 account inserted.');
@@ -83,7 +84,7 @@ app.post('/passwordreset', (req, res) => {
 			MongoClient.connect(url, function (err, db) {
 				if (err) throw err;
 				db.db(projDB)
-					.collection(projTbl)
+					.collection(projAuthTbl)
 					.findOneAndUpdate({ uid: req.body.uid }, { $set: { pwd: newHash } }, function (err, res) {
 						if (err) throw err;
 						console.log('\n>> User has been updated!');
@@ -95,10 +96,60 @@ app.post('/passwordreset', (req, res) => {
 	});
 });
 
+app.post('/addition', (req, res) => {
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+
+		var description = {
+			title: req.body.title,
+			video: req.body.video,
+			category: req.body.category,
+			metadata: req.body.metadata,
+			rating: req.body.rate,
+			review: req.body.review
+		};
+
+		db.db(projDB)
+			.collection(projVaultTbl)
+			.find({ uid: req.body.uid })
+			.toArray((err, user) => {
+				if (err) throw err;
+				if (user[0]) {
+					db.close();
+					res.redirect('/exists');
+				} else {
+					db.db(projDB)
+						.collection(projVaultTbl)
+						.insertOne(description, function (err, res) {
+							if (err) throw err;
+							console.log('\n>> 1 movie inserted.');
+							db.close();
+						});
+					res.redirect('/success');
+				}
+			});
+	});
+});
+
+app.post('/removal', (req, res) => {
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+		db.db(projDB)
+			.collection(projVaultTbl)
+			.findOneAndDelete({ title: req.body.title }, function (err, res) {
+				if (err) throw err;
+				console.log('\n>> Movie has been removed!');
+				db.close();
+			});
+		res.redirect('/success');
+	});
+});
+
 app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/static/index.html');
 });
 
+// Static Pages
 app.get('/registration', (req, res) => {
 	res.sendFile(__dirname + '/static/registration.html');
 });
@@ -119,6 +170,7 @@ app.get('/exists', (req, res) => {
 	res.sendFile(__dirname + '/static/exists.html');
 });
 
+// Protected Pages
 app.get('/content', (req, res) => {
 	res.sendFile(__dirname + '/protected/content.html');
 });
@@ -129,6 +181,18 @@ app.get('/recommendation', (req, res) => {
 
 app.get('/review', (req, res) => {
 	res.sendFile(__dirname + '/protected/review.html');
+});
+
+app.get('/addition', (req, res) => {
+	res.sendFile(__dirname + '/protected/addition.html');
+});
+
+app.get('/removal', (req, res) => {
+	res.sendFile(__dirname + '/protected/removal.html');
+});
+
+app.get('/metadata', (req, res) => {
+	res.sendFile(__dirname + '/protected/metadata.html');
 });
 
 app.listen(port, hostname, () => {

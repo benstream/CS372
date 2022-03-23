@@ -11,5 +11,3 @@ console.log('Hello, user module!');
 let videos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 console.log(videos);
-
-// TODO: Search Functionality Connection
