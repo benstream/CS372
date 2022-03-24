@@ -35,11 +35,11 @@ const saltRounds = 12;
 app.use(parser.urlencoded({ extended: true }));
 
 // Session Management
-
 const store = new MongoDBSession({
 	uri: url,
 	collection: 'mySessions'
 });
+
 app.use(
 	session({
 		secret: 'keyboard cat',
@@ -196,6 +196,50 @@ app.post('/metadata', (req, res) => {
 				}
 			);
 		res.redirect('/success');
+	});
+});
+
+app.post('/review', (req, res) => {
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+		db.db(projDB)
+			.collection(projVaultTbl)
+			.findOneAndUpdate(
+				{ title: req.body.title },
+				{ $set: { review: req.body.review } },
+				function (err, res) {
+					if (err) throw err;
+					console.log('\n>> Movie review has been added!');
+					db.close();
+				}
+			);
+		res.redirect('/success');
+	});
+});
+
+app.post('/search', (req, res) => {
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+		db.db(projDB)
+			.collection(projVaultTbl)
+			.find({ title: req.body.title })
+			.toArray((err, movie) => {
+				if (err) throw err;
+				if (movie[0]) {
+					res.render('media', {
+						title: req.body.title,
+						video: req.body.video,
+						category: req.body.category,
+						metadata: req.body.metadata,
+						rating: req.body.rate,
+						review: req.body.review
+					});
+					db.close();
+				} else {
+					res.send('(!) Movie not found -- please try again.');
+					db.close();
+				}
+			});
 	});
 });
 
