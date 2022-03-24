@@ -218,26 +218,27 @@ app.post('/review', (req, res) => {
 });
 
 app.post('/search', (req, res) => {
+	var query = req.body.query;
+	console.log(query);
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
 		db.db(projDB)
 			.collection(projVaultTbl)
-			.find({ title: req.body.title })
-			.toArray((err, movie) => {
+			.find({
+				$or: [
+					{ title: { $regex: query, $options: 'i' } },
+					{ category: { $regex: query, $options: 'i' } }
+				]
+			})
+			.toArray((err, result) => {
 				if (err) throw err;
-				if (movie[0]) {
-					res.render('media', {
-						title: req.body.title,
-						video: req.body.video,
-						category: req.body.category,
-						metadata: req.body.metadata,
-						rating: req.body.rate,
-						review: req.body.review
-					});
-					db.close();
+				console.log(result);
+				db.close();
+
+				if (result.length === 0) {
+					res.send('👀 No results found -- please try again.');
 				} else {
-					res.send('(!) Movie not found -- please try again.');
-					db.close();
+					res.send(result);
 				}
 			});
 	});
@@ -245,8 +246,8 @@ app.post('/search', (req, res) => {
 
 app.get('/', (req, res) => {
 	req.session.isAuth = true;
-	console.log(req.session);
-	console.log('🍪: ' + req.session.id);
+	// console.log(req.session);
+	// console.log('🍪: ' + req.session.id);
 	res.sendFile(__dirname + '/static/index.html');
 });
 
