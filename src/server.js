@@ -16,6 +16,7 @@ const MongoDBSession = require('connect-mongodb-session')(session);
 const parser = require('body-parser');
 const bcrypt = require('bcrypt');
 const { redirect } = require('express/lib/response');
+let ejs = require('ejs');
 
 const app = express();
 
@@ -284,6 +285,25 @@ protectedPages.forEach((page) => {
 		} else {
 			res.redirect('/');
 		}
+	});
+});
+
+// Render EJS Templates (Table View)
+app.get('/dashboard', (req, res) => {
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+		db.db(projDB)
+			.collection(projVaultTbl)
+			.find({})
+			.toArray((err, result) => {
+				if (err) throw err;
+				console.log(result);
+				db.close();
+				res.render('dashboard.ejs', {
+					title: 'Movie Vault',
+					movies: result
+				});
+			});
 	});
 });
 

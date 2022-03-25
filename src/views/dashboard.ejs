@@ -1,0 +1,31 @@
+<style>
+    table,
+    th,
+    td {
+        border: 1px solid;
+    }
+</style>
+
+<h1>Movie Dashboard 📊</h1>
+
+<div id="navigation"><a href="/success">Home</a> ~ <a href="/">Logout</a></div>
+
+<br />
+
+<table>
+    <tr>
+        <th>Movie</th>
+        <th>Review</th>
+        <th>Rating</th>
+        <th>Tags</th>
+    </tr>
+
+    <% movies.forEach(function(movie) { %>
+        <tr>
+            <td><%= movie.title %></td>
+            <td><%= movie.review %></td>
+            <td><%= movie.rating %></td>
+            <td><%= movie.tags %></td>
+        </tr>
+    <% }); %>
+</table>
