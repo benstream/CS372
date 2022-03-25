@@ -153,7 +153,7 @@ app.post('/addition', (req, res) => {
 			video: req.body.video,
 			category: req.body.category,
 			metadata: req.body.metadata,
-			rating: req.body.rate,
+			rating: parseInt(req.body.rate),
 			review: req.body.review
 		};
 
@@ -232,7 +232,7 @@ app.post('/review', (req, res) => {
 	});
 });
 
-// Query Movie Database [Title / Category]
+// Query Movie Database [Title / Category / Metadata]
 app.post('/search', (req, res) => {
 	var query = req.body.query;
 	console.log(query);
@@ -243,7 +243,8 @@ app.post('/search', (req, res) => {
 			.find({
 				$or: [
 					{ title: { $regex: query, $options: 'i' } },
-					{ category: { $regex: query, $options: 'i' } }
+					{ category: { $regex: query, $options: 'i' } },
+					{ metadata: { $regex: query, $options: 'i' } }
 				]
 			})
 			.toArray((err, result) => {
@@ -255,7 +256,7 @@ app.post('/search', (req, res) => {
 				if (result.length === 0) {
 					res.send('👀 No results found -- please try again.');
 				} else {
-					res.send(result);
+					res.json(result);
 				}
 			});
 	});
@@ -264,8 +265,8 @@ app.post('/search', (req, res) => {
 // FIXME: Session Management (Cookies)
 app.get('/', (req, res) => {
 	req.session.isAuth = true;
-	console.log(req.session);
-	console.log('🍪: ' + req.session.id);
+	// console.log(req.session);
+	// console.log('🍪: ' + req.session.id);
 	res.sendFile(__dirname + '/static/index.html');
 });
 
