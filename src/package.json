@@ -1,11 +1,12 @@
 {
-	"name": "login-page",
+	"name": "video-application",
 	"version": "1.0.0",
 	"description": "Projects for CS 372 (Software Construction)",
 	"main": "app.js",
 	"scripts": {
 		"dev": "nodemon server.js",
-		"start": "node server.js"
+		"start": "node server.js",
+		"prettier": "prettier --write ."
 	},
 	"repository": {
 		"type": "git",
@@ -24,7 +25,9 @@
 	"dependencies": {
 		"bcrypt": "^5.0.1",
 		"body-parser": "^1.19.1",
-		"express": "^4.17.2",
+		"connect-mongodb-session": "^3.1.1",
+		"express": "^4.17.3",
+		"express-session": "^1.17.2",
 		"mongodb": "^4.3.1"
 	}
 }

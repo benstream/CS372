@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Table Aggregation</title>
+	</head>
+
+	<style>
+		table,
+		th,
+		td {
+			border: 1px solid;
+		}
+	</style>
+
+	<body>
+		<h1>Movie Reviews 🍿</h1>
+
+		<div id="navigation"><a href="/success">Home</a> ~ <a href="/">Logout</a></div>
+
+		<br />
+
+		<table>
+			<tr>
+				<th>Movie</th>
+				<th>Likes</th>
+				<th>Ratings</th>
+			</tr>
+			<tr>
+				<td>Example #1</td>
+				<td>( 👍 / 👎 )</td>
+				<td>⭐️</td>
+			</tr>
+			<tr>
+				<td>Example #2</td>
+				<td>( 👍 / 👎 )</td>
+				<td>⭐️⭐️</td>
+			</tr>
+			<tr>
+				<td>Example #3</td>
+				<td>( 👍 / 👎 )</td>
+				<td>⭐️⭐️⭐️</td>
+			</tr>
+			<tr>
+				<td>Example #4</td>
+				<td>( 👍 / 👎 )</td>
+				<td>⭐️⭐️⭐️⭐️</td>
+			</tr>
+			<tr>
+				<td>Example #5</td>
+				<td>( 👍 / 👎 )</td>
+				<td>⭐️⭐️⭐️⭐️⭐️</td>
+			</tr>
+		</table>
+
+		<br />
+
+		<h3>Movie Critic</h3>
+
+		<form action="http://localhost:8080/review" method="POST">
+			<div>
+				<label for="movie">Movie Name:</label>
+				<input type="text" name="title" id="title" required />
+			</div>
+			<div>
+				<textarea
+					name="review"
+					id="review"
+					cols="30"
+					rows="10"
+					placeholder="Leave a review..."
+				></textarea>
+			</div>
+
+			<br />
+
+			<button>Submit</button>
+		</form>
+	</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Movie Addition</title>
+	</head>
+
+	<style>
+		/* Modified from source: https://github.com/mukulkant/Star-rating-using-pure-css */
+		.rate {
+			float: left;
+			height: 46px;
+			padding: 0 10px;
+		}
+		.rate:not(:checked) > input {
+			position: absolute;
+			top: -9999px;
+		}
+		.rate:not(:checked) > label {
+			float: right;
+			width: 1em;
+			overflow: hidden;
+			white-space: nowrap;
+			cursor: pointer;
+			font-size: 30px;
+			color: #ccc;
+		}
+		.rate:not(:checked) > label:before {
+			content: '★ ';
+		}
+		.rate > input:checked ~ label {
+			color: #ffc700;
+		}
+		.rate:not(:checked) > label:hover,
+		.rate:not(:checked) > label:hover ~ label {
+			color: #deb217;
+		}
+		.rate > input:checked + label:hover,
+		.rate > input:checked + label:hover ~ label,
+		.rate > input:checked ~ label:hover,
+		.rate > input:checked ~ label:hover ~ label,
+		.rate > label:hover ~ input:checked ~ label {
+			color: #c59b08;
+		}
+	</style>
+
+	<body>
+		<h1>➕ Movie Addition</h1>
+	</body>
+
+	<form action="http://localhost:8080/addition" method="POST">
+		<div>
+			<label for="movie">Movie Name:</label>
+			<input type="text" name="title" id="title" required />
+		</div>
+		<div>
+			<label for="link">Movie Link / Video ID:</label>
+			<input type="text" name="video" id="video" required />
+		</div>
+		<div>
+			<label for="category">Category:</label>
+			<select name="category">
+				<option value="none">None</option>
+				<option value="Action">Action</option>
+				<option value="Adventure">Adventure</option>
+				<option value="Animation">Animation</option>
+				<option value="Comedy">Comedy</option>
+				<option value="Crime">Crime</option>
+				<option value="Documentary">Documentary</option>
+				<option value="Drama">Drama</option>
+				<option value="Family">Family</option>
+				<option value="Fantasy">Fantasy</option>
+				<option value="History">History</option>
+				<option value="Horror">Horror</option>
+				<option value="Mystery">Mystery</option>
+				<option value="Romance">Romance</option>
+				<option value="Sci-Fi">Sci-Fi</option>
+				<option value="Thriller">Thriller</option>
+			</select>
+		</div>
+		<div>
+			<label for="metadata">Tags:</label>
+			<input type="text" name="metadata" />
+		</div>
+		<div>
+			<label for="rating">Rating:</label>
+			<br />
+			<div class="rate">
+				<input type="radio" id="star5" name="rate" value="5" />
+				<label for="star5" title="text">five</label>
+				<input type="radio" id="star4" name="rate" value="4" />
+				<label for="star4" title="text">four</label>
+				<input type="radio" id="star3" name="rate" value="3" />
+				<label for="star3" title="text">three</label>
+				<input type="radio" id="star2" name="rate" value="2" />
+				<label for="star2" title="text">two</label>
+				<input type="radio" id="star1" name="rate" value="1" />
+				<label for="star1" title="text">one</label>
+			</div>
+			<br />
+		</div>
+		<br />
+		<input type="submit" value="Add Movie" />
+	</form>
+</html>
