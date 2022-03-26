@@ -14,18 +14,16 @@
 
 <table>
     <tr>
-        <th>Movie</th>
+        <th>Title</th>
         <th>Review</th>
         <th>Rating</th>
-        <th>Tags</th>
     </tr>
 
     <% movies.forEach(function(movie) { %>
         <tr>
             <td><%= movie.title %></td>
             <td><%= movie.review %></td>
-            <td><%= movie.rating %></td>
-            <td><%= movie.tags %></td>
+            <td><%= movie.rating %> / 5 ⭐️</td>
         </tr>
     <% }); %>
 </table>

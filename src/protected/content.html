@@ -16,8 +16,9 @@
 
 	<script>
 		// Dynamic Embeded Media Player
-		var media_id = 'mBEfgsEqsc8';
-		var example_video_ids = ['M7lc1UVf-VE', 'LDU_Txk06tM', 'dQw4w9WgXcQ'];
+		var example_video_ids = ['mBEfgsEqsc8', 'M7lc1UVf-VE', 'LDU_Txk06tM', 'dQw4w9WgXcQ'];
+
+		var media_id = example_video_ids[0];
 
 		function setMediaValue(event) {
 			var updated_media_id = document.getElementById('watch').value;
@@ -76,15 +77,6 @@
 		<h1>Movie Application 🎬</h1>
 
 		<div id="navigation"><a href="/success">Home</a> ~ <a href="/">Logout</a></div>
-
-		<br />
-
-		<div class="topnav">
-			<form name="video-id">
-				<input type="text" id="watch" name="watch" placeholder="Insert YouTube Video ID..." />
-				<input type="submit" value="▶" onclick="setMediaValue();" />
-			</form>
-		</div>
 
 		<br />
 
