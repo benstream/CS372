@@ -35,14 +35,17 @@ const saltRounds = 12;
 
 const staticPages = ['/registration', '/forgot', '/success', '/failure', '/exists'];
 
+//'/content' taken out of protected pages for ejs
+
 const protectedPages = [
 	'/addition',
 	'/removal',
 	'/metadata',
 	'/review',
 	'/recommendation',
-	'/content'
+	
 ];
+
 
 app.use(parser.urlencoded({ extended: true }));
 
@@ -277,6 +280,26 @@ staticPages.forEach((page) => {
 		res.sendFile(__dirname + '/static' + page + '.html');
 	});
 });
+
+// Render EJS Content page
+app.get('/content', (req, res) => {
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+
+		//Test Movie
+		var movie = {
+			title: 'NodeJS EJS Tutorial',
+			video: 'yH593K9fYvE',
+			category: 'NA',
+			metadata: 'NA',
+			rating: 5,
+			review: "Cool!"
+		}
+				res.render('content.ejs', {
+					movie:movie
+				});
+			});
+	});
 
 protectedPages.forEach((page) => {
 	app.get(page, (req, res) => {
