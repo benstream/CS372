@@ -283,9 +283,8 @@ app.post('/search', (req, res) => {
 				if (result.length === 0) {
 					res.send('👀 No results found -- please try again.');
 				} else {
-					res.render( 'results.ejs',
-					{
-						results:result
+					res.render('results.ejs', {
+						results: result
 					});
 				}
 			});
@@ -312,13 +311,14 @@ app.get('/content', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
 
-		// Test Movie
+		// Test Movie Query
 		var movie = {
-			title: 'YouTube Embedded Video',
+			title: 'YouTube Embedded Video Title',
 			video: 'M7lc1UVf-VE',
 			category: 'None',
 			metadata: 'N/A',
-			choice: true,
+			choice: false,
+			views: 1337,
 			rating: 4.97,
 			review: 'Hello, world.'
 		};
