@@ -291,7 +291,7 @@ app.post('/search', (req, res) => {
 				if (result.length === 0) {
 					res.send('👀 No results found -- please try again.');
 				} else {
-					res.json(result);
+					res.render(results.ejs, { results: result } );
 				}
 			});
 	});
