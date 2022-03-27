@@ -13,7 +13,8 @@
 			background-color: yellow;
 			color: black;
 		}
-	</style>
+    
+</style>
 
 
 
@@ -101,7 +102,18 @@
 			</div>
 
 			<div class="rating">
-				<div class="rating_stars">⭐️⭐️⭐️⭐️⭐️</div>
+        <div>
+          <label for="rating">Rating:</label>
+          <br />
+          <div class="rate">
+
+            <!-- Dynamic rating Element Content -->
+            <label for="stars" title="text"><%=movie.rating%> </label>
+            
+        
+          </div>
+          <br />
+        </div>
 				<div class="rating_count">(123)</div>
 			</div>
 
