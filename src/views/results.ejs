@@ -1,0 +1,29 @@
+﻿<style>
+    table,
+    th,
+    td {
+        border: 1px solid;
+    }
+</style>
+
+<h1>Search Results 📊</h1>
+
+<div id="navigation"><a href="/success">Home</a> — <a href="/logout">Logout</a></div>
+
+<br />
+
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Review</th>
+        <th>Rating</th>
+    </tr>
+
+    <% results.forEach(function(results) { %>
+        <tr>
+            <td><%= results.title %></td>
+            <td><%= results.review %></td>
+            <td><%= results.rating %> / 5 ⭐️</td>
+        </tr>
+    <% }); %>
+</table>

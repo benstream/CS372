@@ -283,7 +283,10 @@ app.post('/search', (req, res) => {
 				if (result.length === 0) {
 					res.send('👀 No results found -- please try again.');
 				} else {
-					res.render(results.ejs, { results: result } );
+					res.render( 'results.ejs',
+					{
+						results:result
+					});
 				}
 			});
 	});
