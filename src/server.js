@@ -315,13 +315,13 @@ app.get('/content', (req, res) => {
 		if (err) throw err;
 		db.db(projDB)
 			.collection(projVaultTbl)
-			.find({video: req.query.id})
+			.find({ video: req.query.id })
 			.toArray((err, result) => {
 				if (err) throw err;
 				console.log(result);
 				db.close();
 				res.render('content.ejs', {
-					movie: result
+					movie: result[0]
 				});
 			});
 
