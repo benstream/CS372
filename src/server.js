@@ -324,21 +324,6 @@ app.get('/content', (req, res) => {
 					movie: result[0]
 				});
 			});
-
-		//// Test Movie Query
-		//var movie = {
-		//	title: 'YouTube Embedded Video Title',
-		//	video: 'M7lc1UVf-VE',
-		//	category: 'None',
-		//	metadata: 'N/A',
-		//	choice: false,
-		//	views: 1337,
-		//	rating: 4.97,
-		//	review: 'Hello, world.'
-		//};
-		//res.render('content.ejs', {
-		//	movie: movie
-		//});
 	});
 });
 
