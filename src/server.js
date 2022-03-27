@@ -37,15 +37,7 @@ const staticPages = ['/registration', '/forgot', '/success', '/failure', '/exist
 
 //'/content' taken out of protected pages for ejs
 
-const protectedPages = [
-	'/addition',
-	'/removal',
-	'/metadata',
-	'/review',
-	'/recommendation',
-	
-];
-
+const protectedPages = ['/addition', '/removal', '/metadata', '/review', '/recommendation'];
 
 app.use(parser.urlencoded({ extended: true }));
 
@@ -317,20 +309,22 @@ app.get('/content', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
 
-		//Test Movie
+		// Test Movie
 		var movie = {
-			title: 'NodeJS EJS Tutorial',
-			video: 'yH593K9fYvE',
-			category: 'NA',
-			metadata: 'NA',
-			rating: 5,
-			review: "Cool!"
-		}
-				res.render('content.ejs', {
-					movie:movie
-				});
-			});
+			title: 'YouTube Embedded Video',
+			video: 'M7lc1UVf-VE',
+			category: 'None',
+			metadata: 'N/A',
+			choice: true,
+			rating: 4.97,
+			review: 'Hello, world.'
+		};
+
+		res.render('content.ejs', {
+			movie: movie
+		});
 	});
+});
 
 protectedPages.forEach((page) => {
 	app.get(page, (req, res) => {

@@ -1,158 +1,146 @@
 <head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-		<title>Video Player</title>
-  	
-    <h2><%= movie.title %></h2>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>Video Player</title>
 
-	</head>
-	
-	<style>
-		mark {
-			background-color: yellow;
-			color: black;
-		}
-    
+	<h2>
+		Title: <%= movie.title %>
+	</h2>
+
+</head>
+
+<style>
+	mark {
+		background-color: yellow;
+		color: black;
+	}
 </style>
 
+<script>
+	var example_video_ids = ['mBEfgsEqsc8', 'M7lc1UVf-VE', 'LDU_Txk06tM', 'dQw4w9WgXcQ'];
 
+	var media_id = '<%=movie.video%>';
 
+	function setMediaValue(event) {
+		var updated_media_id = document.getElementById('watch').value;
+		alert('Updated YouTube Video ID: ' + updated_media_id);
+		event.preventDefault();
+	}
 
-	<script>
-		// Dynamic Embeded Media Player
-		var media_id = '<%=movie.video%>';
+	// This code loads the IFrame Player API code asynchronously.
+	// Source: https://developers.google.com/youtube/iframe_api_reference
+	var tag = document.createElement('script');
 
-    var example_video_ids = ['M7lc1UVf-VE', 'LDU_Txk06tM', 'dQw4w9WgXcQ'];
+	tag.src = 'https://www.youtube.com/iframe_api';
+	var firstScriptTag = document.getElementsByTagName('script')[0];
+	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-		function setMediaValue(event) {
-			var updated_media_id = document.getElementById('watch').value;
-			alert('Updated YouTube Video ID: ' + updated_media_id);
-			event.preventDefault();
-		}
-
-		// This code loads the IFrame Player API code asynchronously.
-		// Source: https://developers.google.com/youtube/iframe_api_reference
-		var tag = document.createElement('script');
-
-		tag.src = 'https://www.youtube.com/iframe_api';
-		var firstScriptTag = document.getElementsByTagName('script')[0];
-		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-		// This function creates an <iframe> after the API code downloads.
-		var player;
-		function onYouTubeIframeAPIReady() {
-			player = new YT.Player('player', {
-				height: '390',
-				width: '640',
-				videoId: media_id,
-				playerVars: {
-					playsinline: 1
-				},
-				events: {
-					onReady: onPlayerReady,
-					onStateChange: onPlayerStateChange
-				}
-			});
-		}
-
-		// The API will call this function when the video player is ready.
-		function onPlayerReady(event) {
-			event.target.playVideo();
-		}
-
-		// The API calls this function when the player's state changes.
-		// The function indicates that when playing a video (state=1),
-		// the player should play for six seconds and then stop.
-		var done = false;
-		function onPlayerStateChange(event) {
-			if (event.data == YT.PlayerState.PLAYING && !done) {
-				setTimeout(stopVideo, 6000);
-				done = true;
+	// This function creates an <iframe> after the API code downloads.
+	var player;
+	function onYouTubeIframeAPIReady() {
+		player = new YT.Player('player', {
+			height: '390',
+			width: '640',
+			videoId: media_id,
+			playerVars: {
+				playsinline: 1
+			},
+			events: {
+				onReady: onPlayerReady,
+				onStateChange: onPlayerStateChange
 			}
+		});
+	}
+
+	// The API will call this function when the video player is ready.
+	function onPlayerReady(event) {
+		event.target.playVideo();
+	}
+
+	// The API calls this function when the player's state changes.
+	// The function indicates that when playing a video (state=1),
+	// the player should play for six seconds and then stop.
+	var done = false;
+	function onPlayerStateChange(event) {
+		if (event.data == YT.PlayerState.PLAYING && !done) {
+			setTimeout(stopVideo, 6000);
+			done = true;
 		}
-		function stopVideo() {
-			player.stopVideo();
-		}
+	}
+	function stopVideo() {
+		player.stopVideo();
+	}
 
-		// TODO: Fetch rating and metadata from database vault.
+</script>
 
-	</script>
+<body>
+	<h1>Movie Application 🎬</h1>
 
-	<body>
-		<h1>Movie Application 🎬</h1>
+	<div id="navigation"><a href="/success">Home</a> — <a href="/">Logout</a></div>
 
-		<div id="navigation"><a href="/success">Home</a> ~ <a href="/">Logout</a></div>
+	<br />
 
-		<br />
-
-		<div class="topnav">
-			<form name="video-id">
-				<input type="text" id="watch" name="watch" placeholder="Insert YouTube Video ID..." />
-				<input type="submit" value="▶" onclick="setMediaValue();" />
-			</form>
+	<div class="video-player">
+		<div class="viewer-choice">
+			<% if (movie.choice) { %>
+				<mark>Viewer's Choice</mark>
+			<% } %>
 		</div>
 
 		<br />
 
-		<div class="video-player">
-			<!-- Dynamic Mark Element Content -->
-			<div class="viewer-choice">
-				<mark>Viewer's Choice</mark>
-			</div>
+		<div class="rating">
+			<div>
+				<label for="rating"><strong>Rating: </strong></label>
+				<br />
+				<div class="rate">
 
-			<div class="rating">
-        <div>
-          <label for="rating">Rating:</label>
-          <br />
-          <div class="rate">
+					<!-- Dynamic rating Element Content -->
+					<label for="stars" title="text">
+						<%=movie.rating%> ⭐️
+					</label>
 
-            <!-- Dynamic rating Element Content -->
-            <label for="stars" title="text"><%=movie.rating%> </label>
-            
-        
-          </div>
-          <br />
-        </div>
-				<div class="rating_count">(123)</div>
-			</div>
+				</div>
 
-			<br />
+				<br />
 
-			<div id="player"></div>
+				<div id="player"></div>
 
-			<br />
+				<br />
 
-			<div class="thumbs">
-				<strong>Rating:</strong>
-				<button class="thumbs_up">👍</button>
-				<button class="thumbs_down">👎</button>
-			</div>
+				<br />
 
-			<br />
+				<div class="thumbs">
+					<button class="thumbs_up">👍</button>
+					<button class="thumbs_down">👎</button>
+				</div>
 
-			<div name="views">
-				<strong>Views:</strong>
-				<div id="CounterVisitor">
-					<span class="counter-item">0</span>
-					<span class="counter-item">0</span>
-					<span class="counter-item">1</span>
-					<span class="counter-item">1</span>
-					<span class="counter-item">8</span>
-					<span class="counter-item">4</span>
+				<br />
+
+				<div name="views">
+					<strong>Views:</strong>
+					<div id="CounterVisitor">
+						<span class="counter-item">0</span>
+						<span class="counter-item">0</span>
+						<span class="counter-item">1</span>
+						<span class="counter-item">1</span>
+						<span class="counter-item">8</span>
+						<span class="counter-item">4</span>
+					</div>
 				</div>
 			</div>
-		</div>
-	</body>
+</body>
 
-	<script>
-		// Session Content View Counter
-		var n = localStorage.getItem('on_load_counter');
-		if (n === null) {
-			n = 0;
-		}
-		n++;
-		localStorage.setItem('on_load_counter', n);
-		document.getElementById('CounterVisitor').innerHTML = n;
-	</script>
+<script>
+	// Session Content View Counter
+	var n = localStorage.getItem('on_load_counter');
+	if (n === null) {
+		n = 0;
+	}
+	n++;
+	localStorage.setItem('on_load_counter', n);
+	document.getElementById('CounterVisitor').innerHTML = n;
+</script>
+
 </html>
