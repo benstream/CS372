@@ -15,13 +15,16 @@
 <table>
     <tr>
         <th>Title</th>
+        <th></th>
         <th>Review</th>
         <th>Rating</th>
     </tr>
 
     <% results.forEach(function(results) { %>
         <tr>
-            <td><%= results.title %></td>
+            <td>
+              <a href="/content"> <%= results.title %></a> </td>
+            <td><img src="https://img.youtube.com/vi/<%=results.video%>/default.jpg" alt="" border="3" height="100" width="300"></img></th>
             <td><%= results.review %></td>
             <td><%= results.rating %> / 5 ⭐️</td>
         </tr>
