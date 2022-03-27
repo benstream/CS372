@@ -65,8 +65,7 @@ app.use(
 	})
 );
 
-// Account Management (Login/Logout)
-// TODO: Remove session cookie upon logout.
+// Account Management (Login)
 app.post('/login', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
@@ -83,8 +82,34 @@ app.post('/login', (req, res) => {
 						res.redirect('/failure');
 					} else {
 						res.redirect('/success');
+
+						// ACCESS ROLES:
+						// 1: Viewer
+						// 2: Editor
+						// 3: Manager
+
+						req.session.user = {
+							uid: user[0].uid,
+							pwd: user[0].pwd,
+							role: user[0].role
+						};
+
 						// Assigning role to localStorage
-						// localStorage.setItem('role', user[0].access);
+						// req.session.access = user[0].role;
+
+						// TODO: Add additional fields to localStorage.
+						if (user[0].role == 'manager') {
+							req.session.access = 'manager';
+						} else if (user[0].role == 'editor') {
+							req.session.access = 'editor';
+						} else if (user[0].role == 'viewer') {
+							req.session.access = 'viewer';
+						} else {
+							req.session.access = 'viewer';
+						}
+
+						// Assigning role to localStorage
+						// localStorage.setItem('role', req.session.access);
 					}
 				}
 				db.close();
@@ -92,7 +117,13 @@ app.post('/login', (req, res) => {
 	});
 });
 
-// New Account Creation
+// Account Management (Logout) -- Remove session cookie.
+app.get('/logout', (req, res) => {
+	req.session.destroy();
+	res.redirect('/');
+});
+
+// Account Management (Registration)
 app.post('/registrationreq', (req, res) => {
 	bcrypt.genSalt(saltRounds, function (err, salt) {
 		bcrypt.hash(req.body.pwd, salt, function (err, hash) {
@@ -269,8 +300,8 @@ app.post('/search', (req, res) => {
 // FIXME: Session Management (Cookies)
 app.get('/', (req, res) => {
 	req.session.isAuth = true;
-	// console.log(req.session);
-	// console.log('🍪: ' + req.session.id);
+	console.log(req.session);
+	console.log('🍪: ' + req.session.id);
 	res.sendFile(__dirname + '/static/index.html');
 });
 
