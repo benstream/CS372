@@ -12,6 +12,7 @@
 
 const express = require('express');
 const session = require('express-session');
+//const querystring = require('querystring');
 const MongoDBSession = require('connect-mongodb-session')(session);
 const parser = require('body-parser');
 const bcrypt = require('bcrypt');
@@ -310,22 +311,32 @@ staticPages.forEach((page) => {
 app.get('/content', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
+		db.db(projDB)
+			.collection(projVaultTbl)
+			.find({video: req.query.id})
+			.toArray((err, result) => {
+				if (err) throw err;
+				console.log(result);
+				db.close();
+				res.render('content.ejs', {
+					movie: result
+				});
+			});
 
-		// Test Movie Query
-		var movie = {
-			title: 'YouTube Embedded Video Title',
-			video: 'M7lc1UVf-VE',
-			category: 'None',
-			metadata: 'N/A',
-			choice: false,
-			views: 1337,
-			rating: 4.97,
-			review: 'Hello, world.'
-		};
-
-		res.render('content.ejs', {
-			movie: movie
-		});
+		//// Test Movie Query
+		//var movie = {
+		//	title: 'YouTube Embedded Video Title',
+		//	video: 'M7lc1UVf-VE',
+		//	category: 'None',
+		//	metadata: 'N/A',
+		//	choice: false,
+		//	views: 1337,
+		//	rating: 4.97,
+		//	review: 'Hello, world.'
+		//};
+		//res.render('content.ejs', {
+		//	movie: movie
+		//});
 	});
 });
 
