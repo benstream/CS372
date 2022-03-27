@@ -180,6 +180,8 @@ app.post('/addition', (req, res) => {
 			video: req.body.video,
 			category: req.body.category,
 			metadata: req.body.metadata,
+			choice: false,
+			views: 0,
 			rating: parseInt(req.body.rate),
 			review: req.body.review
 		};
