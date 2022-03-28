@@ -7,32 +7,10 @@
 		<title>Login Page</title>
 	</head>
 
-	<body>
-		<h1>✅ Login successful.</h1>
-
-		<div class="box">
-			<form class="search" action="http://localhost:8080/search" method="POST">
-				<input class="bar" type="text" placeholder="Type a movie to watch..." name="query" />
-				<button type="submit">🔎 Search</button>
-			</form>
-		</div>
-
-		<div id="navigation">
-			<ul>
-				<li><a href="/content">Movie Experience</a></li>
-				<li>
-					<a href="/addition">Add</a> — <a href="/removal">Remove</a> — <a href="/metadata">Edit</a>
-				</li>
-				<li><a href="/dashboard">Movie Dashboard</a></li>
-				<li><a href="/review">Critic Reviews</a></li>
-				<li><a href="/logout">Logout</a></li>
-			</ul>
-		</div>
-
-		<h3 id="idle-alert"></h3>
-	</body>
-
 	<script>
+		// Welcome the user:
+		// var welcome = 'Welcome, <%= user.uid %>!';
+		
 		setTimeout(function () {
 			inactivity('⏰ Logging out...');
 			setTimeout(function () {
@@ -48,4 +26,33 @@
 			location.href = destination;
 		}
 	</script>
+
+	<body>
+		<h1>✅ Login successful.</h1>
+		
+		<h3 id="welcome">
+			Welcome, <%=user%>!
+			Your access level is: <%=access%>.
+		</h3>
+
+		<div class="box">
+			<form class="search" action="http://localhost:8080/search" method="POST">
+				<input class="bar" type="text" placeholder="Type a movie to watch..." name="query" />
+				<button type="submit">🔎 Search</button>
+			</form>
+		</div>
+
+		<div id="navigation">
+			<ul>
+				<li>
+					<a href="/addition">Add</a> — <a href="/removal">Remove</a> — <a href="/metadata">Edit</a>
+				</li>
+				<li><a href="/dashboard">Movie Dashboard</a></li>
+				<li><a href="/review">Critic Reviews</a></li>
+				<li><a href="/logout">Logout</a></li>
+			</ul>
+		</div>
+
+		<h3 id="idle-alert"></h3>
+	</body>
 </html>

@@ -25,7 +25,11 @@
               <a href="/content?id=<%=results.video%>" id ="resultsLink" _id="<%=results._id%>">
               <%=results.title%>
               </a> </td>
-            <td><img src="https://img.youtube.com/vi/<%=results.video%>/default.jpg" alt="" border="3" height="100" width="300"></img></td>
+            <td>
+                <img src="https://img.youtube.com/vi/<%=results.video%>/hqdefault.jpg" 
+                alt="<%=results.title%> YouTube Video Thumbnail" 
+                border="3" width="320" height="180"></img>
+            </td>
             <td><%= results.review %></td>
             <td><%= results.rating %> / 5 ⭐️</td>
         </tr>

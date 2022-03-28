@@ -12,8 +12,9 @@
 
 const express = require('express');
 const session = require('express-session');
-//const querystring = require('querystring');
+const querystring = require('querystring');
 const MongoDBSession = require('connect-mongodb-session')(session);
+const passport = require('passport');
 const parser = require('body-parser');
 const bcrypt = require('bcrypt');
 const { redirect } = require('express/lib/response');
@@ -29,16 +30,13 @@ const projDB = 'cs372';
 const projAuthTbl = 'user';
 const projVaultTbl = 'media';
 
+const staticPages = ['/registration', '/forgot', '/failure', '/exists'];
+const protectedPages = ['/addition', '/removal', '/metadata', '/review'];
+
 const hostname = '127.0.0.1';
 const port = 8080;
 
 const saltRounds = 12;
-
-const staticPages = ['/registration', '/forgot', '/success', '/failure', '/exists'];
-
-//'/content' taken out of protected pages for ejs
-
-const protectedPages = ['/addition', '/removal', '/metadata', '/review', '/recommendation'];
 
 app.use(parser.urlencoded({ extended: true }));
 
@@ -48,7 +46,7 @@ const store = new MongoDBSession({
 	collection: 'mySessions'
 });
 
-// FIXME: Add additional fields to session cookie.
+// Add additional fields to session cookie.
 app.use(
 	session({
 		secret: 'keyboard cat',
@@ -57,6 +55,100 @@ app.use(
 		store: store
 	})
 );
+
+// TODO (Solomon):
+// - Add a page to the database that will be accessible by all users (or subsection).
+// - Restrict the page to the appropriate user roles.
+// - Experiment with cookies for local storage.
+// - User Routes (Login, Registration, etc.)
+
+// Allow access to only specific pages
+app.use((req, res, next) => {
+	if (staticPages.includes(req.path)) {
+		next();
+	} else if (protectedPages.includes(req.path)) {
+		if (req.session.user) {
+			next();
+		} else {
+			// Return a response with no access
+			res.redirect('/403');
+			console.log('🔐 User not logged in.');
+		}
+	} else {
+		next();
+	}
+});
+
+// Allow content editor to access the following pages:
+// 1. Movie Dashboard
+// 2. Movie Review
+// 3. Movie Recommendation
+// app.use((req, res, next) => {
+// 	if (req.session.user.role === 'editor') {
+// 		if (req.path === '/dashboard' || req.path === '/review' || req.path === '/recommendation') {
+// 			next();
+// 		} else {
+// 			res.redirect('/404');
+// 			console.log('🔐 User not authorized.');
+// 		}
+// 	} else {
+// 		next();
+// 	}
+// });
+
+// Allow managers to add and remove media
+app.use((req, res, next) => {
+	if (req.path === '/addition') {
+		if (req.session.user.role === 'manager') {
+			next();
+		} else {
+			res.redirect('/403');
+			console.log('🔐 User not logged in.');
+		}
+	} else if (req.path === '/removal') {
+		if (req.session.user.role === 'manager') {
+			next();
+		} else {
+			res.redirect('/403');
+			console.log('🔐 User not logged in.');
+		}
+	} else {
+		next();
+	}
+});
+
+// Assign pages to database role access levels (MongoDB)
+app.use((req, res, next) => {
+	if (req.session.user) {
+		MongoClient.connect(url, function (err, db) {
+			if (err) throw err;
+			db.db(projDB)
+				.collection(projAuthTbl)
+				.findOne({ username: req.session.user.username }, function (err, result) {
+					if (err) throw err;
+					req.session.user.role = result.role;
+					next();
+				});
+		});
+	} else {
+		next();
+	}
+});
+
+// * OTHER INFORMAITON (SUPPLEMENTAL):
+// app.use(function(req, res, next) {
+// 	if (staticPages.includes(req.path)) {
+// 		next();
+// 	} else if (protectedPages.includes(req.path)) {
+// 		if (req.session.user) {
+// 			next();
+// 		} else {
+// 			res.redirect('/login');
+// 		}
+// 	} else {
+// 		next();
+// 	}
+// });
 
 // Account Management (Login)
 app.post('/login', (req, res) => {
@@ -76,21 +168,12 @@ app.post('/login', (req, res) => {
 					} else {
 						res.redirect('/success');
 
-						// ACCESS ROLES:
-						// 1: Viewer
-						// 2: Editor
-						// 3: Manager
-
 						req.session.user = {
 							uid: user[0].uid,
 							pwd: user[0].pwd,
 							role: user[0].role
 						};
 
-						// Assigning role to localStorage
-						// req.session.access = user[0].role;
-
-						// TODO: Add additional fields to localStorage.
 						if (user[0].role == 'manager') {
 							req.session.access = 'manager';
 						} else if (user[0].role == 'editor') {
@@ -100,9 +183,6 @@ app.post('/login', (req, res) => {
 						} else {
 							req.session.access = 'viewer';
 						}
-
-						// Assigning role to localStorage
-						// localStorage.setItem('role', req.session.access);
 					}
 				}
 				db.close();
@@ -294,7 +374,7 @@ app.post('/search', (req, res) => {
 	});
 });
 
-// FIXME: Session Management (Cookies)
+// Session Management (Cookies)
 app.get('/', (req, res) => {
 	req.session.isAuth = true;
 	console.log(req.session);
@@ -334,6 +414,26 @@ protectedPages.forEach((page) => {
 		} else {
 			res.redirect('/');
 		}
+	});
+});
+
+// Show the EJS success page
+app.get('/success', (req, res) => {
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+		db.db(projDB)
+			.collection(projAuthTbl)
+			.find({})
+			.toArray((err, result) => {
+				if (err) throw err;
+				console.log(result);
+				db.close();
+				res.render('success.ejs', {
+					user: result[0].uid,
+					email: result[0].email,
+					access: result[0].access
+				});
+			});
 	});
 });
 
