@@ -41,6 +41,7 @@ const saltRounds = 12;
 app.use(parser.urlencoded({ extended: true }));
 
 // Session Management
+//const store = new session.MemoryStore();
 const store = new MongoDBSession({
 	uri: url,
 	collection: 'mySessions'
@@ -49,6 +50,10 @@ const store = new MongoDBSession({
 // Add additional fields to session cookie.
 app.use(
 	session({
+		cookie: {
+			maxAge: 36000000,
+			httpOnly: false // <- set httpOnly to false
+		},
 		secret: 'keyboard cat',
 		resave: false,
 		saveUninitialized: false,
@@ -99,14 +104,14 @@ app.use((req, res, next) => {
 // Allow managers to add and remove media
 app.use((req, res, next) => {
 	if (req.path === '/addition') {
-		if (req.session.user.role === 'manager') {
+		if (req.session.user.access === 'manager') {
 			next();
 		} else {
 			res.redirect('/403');
 			console.log('🔐 User not logged in.');
 		}
 	} else if (req.path === '/removal') {
-		if (req.session.user.role === 'manager') {
+		if (req.session.user.access === 'manager') {
 			next();
 		} else {
 			res.redirect('/403');
@@ -126,7 +131,7 @@ app.use((req, res, next) => {
 				.collection(projAuthTbl)
 				.findOne({ username: req.session.user.username }, function (err, result) {
 					if (err) throw err;
-					req.session.user.role = result.role;
+					req.session.user.access = result.access;
 					next();
 				});
 		});
@@ -168,21 +173,25 @@ app.post('/login', (req, res) => {
 					} else {
 						res.redirect('/success');
 
+						req.session.isAuth = true;
 						req.session.user = {
 							uid: user[0].uid,
+							email: user[0].email,
 							pwd: user[0].pwd,
-							role: user[0].role
+							access: user[0].access
 						};
-
-						if (user[0].role == 'manager') {
-							req.session.access = 'manager';
-						} else if (user[0].role == 'editor') {
-							req.session.access = 'editor';
-						} else if (user[0].role == 'viewer') {
-							req.session.access = 'viewer';
-						} else {
-							req.session.access = 'viewer';
-						}
+						req.session.save();
+						console.log(JSON.stringify(req.session.user));
+						
+						//if (user[0].role == 'manager') {
+						//	req.session.access = 'manager';
+						//} else if (user[0].role == 'editor') {
+						//	req.session.access = 'editor';
+						//} else if (user[0].role == 'viewer') {
+						//	req.session.access = 'viewer';
+						//} else {
+						//	req.session.access = 'viewer';
+						//}
 					}
 				}
 				db.close();
@@ -376,7 +385,7 @@ app.post('/search', (req, res) => {
 
 // Session Management (Cookies)
 app.get('/', (req, res) => {
-	req.session.isAuth = true;
+	//req.session.isAuth = false;
 	console.log(req.session);
 	console.log('🍪: ' + req.session.id);
 	res.sendFile(__dirname + '/static/index.html');
@@ -419,22 +428,34 @@ protectedPages.forEach((page) => {
 
 // Show the EJS success page
 app.get('/success', (req, res) => {
-	MongoClient.connect(url, function (err, db) {
-		if (err) throw err;
-		db.db(projDB)
-			.collection(projAuthTbl)
-			.find({})
-			.toArray((err, result) => {
-				if (err) throw err;
-				console.log(result);
-				db.close();
-				res.render('success.ejs', {
-					user: result[0].uid,
-					email: result[0].email,
-					access: result[0].access
-				});
-			});
-	});
+
+	res.render('success.ejs',
+		{
+			user: req.session.user.uid,
+			email: req.session.user.email,
+			access: req.session.user.access
+		}
+		);
+
+
+	//MongoClient.connect(url, function (err, db) {
+	//	if (err) throw err;
+	//	db.db(projDB)
+	//		.collection('mySessions')
+	//		.find({ _id : req.session.id})
+	//		.toArray((err, result) => {
+	//			if (err) throw err;
+	//			console.log(result);
+	//			res.render('success.ejs',
+	//				{
+	//					user: result[0].uid,
+	//					email: result[0].email,
+	//					access: result[0].access
+	//				});
+	//			db.close();
+	//		});
+
+	//});
 });
 
 // Render EJS Templates (Table View)
