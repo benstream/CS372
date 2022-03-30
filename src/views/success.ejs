@@ -8,9 +8,6 @@
 	</head>
 
 	<script>
-		// Welcome the user:
-		// var welcome = 'Welcome, <%= user.uid %>!';
-		
 		setTimeout(function () {
 			inactivity('⏰ Logging out...');
 			setTimeout(function () {
@@ -31,8 +28,8 @@
 		<h1>✅ Login successful.</h1>
 		
 		<h3 id="welcome">
-			Welcome, <%=user%>!
-			Your access level is: <%=access%>.
+			Welcome, <%= uid %>!
+			(access level: <%= access %>)
 		</h3>
 
 		<div class="box">
