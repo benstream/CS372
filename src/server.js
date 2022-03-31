@@ -5,12 +5,9 @@
 
 const express = require('express');
 const session = require('express-session');
-const querystring = require('querystring');
 const MongoDBSession = require('connect-mongodb-session')(session);
-const passport = require('passport');
 const parser = require('body-parser');
 const bcrypt = require('bcrypt');
-const { redirect } = require('express/lib/response');
 let ejs = require('ejs');
 
 const app = express();
@@ -100,8 +97,8 @@ app.use((req, res, next) => {
 				next();
 			} else {
 				// TODO: finalized page error codes (#33).
-				console.log('Bad Page: ' + req.path);
 				res.status(403).send('⛔️ 403: Forbidden');
+				console.log('Bad Page: ' + req.path);
 			}
 		}
 	});
@@ -263,7 +260,7 @@ app.post('/metadata', (req, res) => {
 			.collection(projVaultTbl)
 			.findOneAndUpdate(
 				{ title: req.body.title },
-				{ $set: { metadata: req.body.metadata } },
+				{ $set: { metadata: req.body.metadata, choice: req.body.choice } },
 				function (err, res) {
 					if (err) throw err;
 					console.log('\n>> Movie metadata has been updated!');
@@ -327,7 +324,6 @@ app.post('/search', (req, res) => {
 
 // Session Management (Cookies)
 app.get('/', (req, res) => {
-	//req.session.isAuth = false;
 	console.log(req.session);
 	console.log('🍪: ' + req.session.id);
 	res.sendFile(__dirname + '/static/index.html');

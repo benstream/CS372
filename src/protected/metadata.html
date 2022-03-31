@@ -7,6 +7,13 @@
 		<title>Movie Tags</title>
 	</head>
 
+	<style>
+		mark {
+			background-color: yellow;
+			color: black;
+		}
+	</style>
+
 	<body>
 		<h1>🔗 Movie Tags</h1>
 	</body>
@@ -20,7 +27,12 @@
 			<label for="metadata">Tags:</label>
 			<input type="text" name="metadata" id="metadata" />
 		</div>
+		<div>
+			<label for="choice">Viewer's Choice:</label>
+			<input type="checkbox" name="choice" id="choice" value="true" />
+			<mark>Highlighted Selection</mark>
+		</div>
 		<br />
-		<input type="submit" value="Edit Tags" />
+		<input type="submit" value="Edit Settings" />
 	</form>
 </html>
