@@ -24,23 +24,27 @@ const projAuthTbl = 'user';
 const sessionTbl = 'sessions';
 const projVaultTbl = 'media';
 
-// +---------------+--------+--------+--------+
-// | Page Name     | Viewer | Editor | Manger |
-// +---------------+--------+--------+--------+
-// | Success       | ✅     | ✅      | ✅     |
-// +---------------+--------+--------+--------+
-// | Content       | ✅     | ❌      | ❌     |
-// +---------------+--------+--------+--------+
-// | Addition      | ❌     | ✅      | ❌     |
-// +---------------+--------+--------+--------+
-// | Removal       | ❌     | ✅      | ❌     |
-// +---------------+--------+--------+--------+
-// | Dashboard     | ❌     | ✅      | ✅     |
-// +---------------+--------+--------+--------+
-// | Critic Review | ❌     | ❌      | ✅     |
-// +---------------+--------+--------+--------+
+/*
++-----------+--------+--------+--------+
+| Page Name | Viewer | Editor | Manger |
++-----------+--------+--------+--------+
+| Success   | ✅      | ✅     | ✅     |
++-----------+--------+--------+--------+
+| Content   | ✅      | ❌     | ❌     |
++-----------+--------+--------+--------+
+| Addition  | ❌      | ✅     | ❌     |
++-----------+--------+--------+--------+
+| Removal   | ❌      | ✅     | ❌     |
++-----------+--------+--------+--------+
+| Tags      | ❌      | ✅     | ❌     |
++-----------+--------+--------+--------+
+| Dashboard | ❌      | ✅     | ✅     |
++-----------+--------+--------+--------+
+| Review    | ❌      | ❌     | ✅     |
++-----------+--------+--------+--------+
+*/
 
-const viewerPages = ['/success', '/content', '/dashboard'];
+const viewerPages = ['/success', '/content'];
 const editorPages = ['/success', '/addition', '/removal', '/metadata', '/dashboard'];
 const managerPages = ['/success', '/dashboard', '/review'];
 
@@ -82,23 +86,20 @@ app.use((req, res, next) => {
 			res.status(500).send('⛔️ 500: Internal Server Error');
 		} else {
 			if (viewerPages.includes(req.path) && req.session.user.access === 'viewer') {
-				console.log('Viewer -- good page');
 				next();
 			} else if (editorPages.includes(req.path) && req.session.user.access === 'editor') {
-				console.log('Editor -- good page');
 				next();
 			} else if (managerPages.includes(req.path) && req.session.user.access === 'manager') {
-				console.log('Manager -- good page');
 				next();
 			} else if (
 				!viewerPages.includes(req.path) &&
 				!editorPages.includes(req.path) &&
 				!managerPages.includes(req.path)
 			) {
-				console.log('Good Page: ' + req.path);
 				res.status(200);
 				next();
 			} else {
+				// TODO: finalized page error codes (#33).
 				console.log('Bad Page: ' + req.path);
 				res.status(403).send('⛔️ 403: Forbidden');
 			}
