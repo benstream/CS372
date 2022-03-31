@@ -21,8 +21,28 @@ var url = 'mongodb://127.0.0.1:27017/';
 
 const projDB = 'cs372';
 const projAuthTbl = 'user';
-const sessionTbl = 'sessions'
+const sessionTbl = 'sessions';
 const projVaultTbl = 'media';
+
+// +---------------+--------+--------+--------+
+// | Page Name     | Viewer | Editor | Manger |
+// +---------------+--------+--------+--------+
+// | Success       | ✅     | ✅      | ✅     |
+// +---------------+--------+--------+--------+
+// | Content       | ✅     | ❌      | ❌     |
+// +---------------+--------+--------+--------+
+// | Addition      | ❌     | ✅      | ❌     |
+// +---------------+--------+--------+--------+
+// | Removal       | ❌     | ✅      | ❌     |
+// +---------------+--------+--------+--------+
+// | Dashboard     | ❌     | ✅      | ✅     |
+// +---------------+--------+--------+--------+
+// | Critic Review | ❌     | ❌      | ✅     |
+// +---------------+--------+--------+--------+
+
+const viewerPages = ['/success', '/content', '/dashboard'];
+const editorPages = ['/success', '/addition', '/removal', '/metadata', '/dashboard'];
+const managerPages = ['/success', '/dashboard', '/review'];
 
 const staticPages = ['/registration', '/forgot', '/failure', '/exists'];
 const protectedPages = ['/addition', '/removal', '/metadata', '/review'];
@@ -35,21 +55,18 @@ const saltRounds = 12;
 app.use(parser.urlencoded({ extended: true }));
 
 // Session Management
-//const store = new session.MemoryStore();
 const store = new MongoDBSession({
 	uri: url,
 	databaseName: projDB,
 	collection: sessionTbl
 });
 
-
-
-// Add additional fields to session cookie.
+// Add additional fields to session cookie (httpOnly = false).
 app.use(
 	session({
 		cookie: {
 			maxAge: 36000000,
-			httpOnly: false // <- set httpOnly to false
+			httpOnly: false
 		},
 		secret: 'keyboard cat',
 		resave: false,
@@ -58,55 +75,35 @@ app.use(
 	})
 );
 
-// Assign req.session.user.role to database access levels.
-var userRole = {
-	admin: 'admin',
-	manager: 'manager',
-	editor: 'editor',
-	viewer: 'viewer'
-};
-
-// Assign pages to database role access levels
+// Restrict pages from specific users.
 app.use((req, res, next) => {
-	if (req.session.user) {
-		MongoClient.connect(url, function (err, db) {
-			if (err) throw err;
-			db.db(projDB)
-				.collection(projAuthTbl)
-				.findOne({ uid: req.session.user.uid }, function (err, result) {
-					if (err) throw err;
-					req.session.user.access = result.access;
-					next();
-				});
-		});
-	} else {
-		next();
-	}
-});
-
-// // Block the success page if not logged in.
-// app.use((req, res, next) => {
-// 	if (staticPages.includes(req.path) && !req.session.user) {
-// 		res.redirect('/login');
-// 	} else {
-// 		next();
-// 	}
-// });
-
-// Allow access to only specific pages
-app.use((req, res, next) => {
-	if (staticPages.includes(req.path)) {
-		next();
-	} else if (protectedPages.includes(req.path)) {
-		if (req.session.user) {
-			next();
+	store.get(req.session.id, function (error, session) {
+		if (error) {
+			res.status(500).send('⛔️ 500: Internal Server Error');
 		} else {
-			res.status(403).send('⛔️ 403: Forbidden');
-			// console.log('🔐 User not logged in.');
+			if (viewerPages.includes(req.path) && req.session.user.access === 'viewer') {
+				console.log('Viewer -- good page');
+				next();
+			} else if (editorPages.includes(req.path) && req.session.user.access === 'editor') {
+				console.log('Editor -- good page');
+				next();
+			} else if (managerPages.includes(req.path) && req.session.user.access === 'manager') {
+				console.log('Manager -- good page');
+				next();
+			} else if (
+				!viewerPages.includes(req.path) &&
+				!editorPages.includes(req.path) &&
+				!managerPages.includes(req.path)
+			) {
+				console.log('Good Page: ' + req.path);
+				res.status(200);
+				next();
+			} else {
+				console.log('Bad Page: ' + req.path);
+				res.status(403).send('⛔️ 403: Forbidden');
+			}
 		}
-	} else {
-		next();
-	}
+	});
 });
 
 // Account Management (Login)
@@ -125,8 +122,6 @@ app.post('/login', (req, res) => {
 					if (verification == false) {
 						res.redirect('/failure');
 					} else {
-						
-
 						req.session.isAuth = true;
 						req.session.user = {
 							uid: user[0].uid,
@@ -138,7 +133,6 @@ app.post('/login', (req, res) => {
 						console.log(JSON.stringify(req.session.user));
 
 						res.redirect('/success');
-
 					}
 				}
 				db.close();
@@ -146,7 +140,7 @@ app.post('/login', (req, res) => {
 	});
 });
 
-// Account Management (Logout) -- Remove session cookie.
+// Account Management (Logout): Remove session cookie.
 app.get('/logout', (req, res) => {
 	req.session.destroy();
 	res.redirect('/');
@@ -375,19 +369,17 @@ protectedPages.forEach((page) => {
 
 // Show the EJS success page
 app.get('/success', (req, res) => {
-
 	store.get(req.session.id, function (error, session) {
 		if (error) {
 			res.status(500).send(error);
 			return;
-		}
-		else {
+		} else {
 			res.render('success.ejs', {
 				uid: req.session.user.uid,
 				access: req.session.user.access
-			})
+			});
 		}
-		})
+	});
 });
 
 // Render EJS Templates (Table View)
