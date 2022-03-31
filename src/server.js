@@ -41,8 +41,8 @@ const projVaultTbl = 'media';
 // +---------------+--------+--------+--------+
 
 const viewerPages = ['/success', '/content', '/dashboard'];
-const editorPages = ['/success', '/addition', '/removal', '/metadata', '/dashboard'];
-const managerPages = ['/success', '/dashboard', '/review'];
+const editorPages = ['/success', '/content', '/addition', '/removal', '/metadata', '/dashboard'];
+const managerPages = ['/success', '/content', '/dashboard', '/review'];
 
 const staticPages = ['/registration', '/forgot', '/failure', '/exists'];
 const protectedPages = ['/addition', '/removal', '/metadata', '/review'];
