@@ -21,6 +21,7 @@ var url = 'mongodb://127.0.0.1:27017/';
 
 const projDB = 'cs372';
 const projAuthTbl = 'user';
+const sessionTbl = 'sessions'
 const projVaultTbl = 'media';
 
 const staticPages = ['/registration', '/forgot', '/failure', '/exists'];
@@ -37,7 +38,8 @@ app.use(parser.urlencoded({ extended: true }));
 //const store = new session.MemoryStore();
 const store = new MongoDBSession({
 	uri: url,
-	collection: 'mySessions'
+	databaseName: projDB,
+	collection: sessionTbl
 });
 
 
