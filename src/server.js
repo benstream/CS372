@@ -40,6 +40,8 @@ const store = new MongoDBSession({
 	collection: 'mySessions'
 });
 
+
+
 // Add additional fields to session cookie.
 app.use(
 	session({
@@ -121,7 +123,7 @@ app.post('/login', (req, res) => {
 					if (verification == false) {
 						res.redirect('/failure');
 					} else {
-						res.redirect('/success');
+						
 
 						req.session.isAuth = true;
 						req.session.user = {
@@ -132,16 +134,9 @@ app.post('/login', (req, res) => {
 						};
 						req.session.save();
 						console.log(JSON.stringify(req.session.user));
-						
-						//if (user[0].role == 'manager') {
-						//	req.session.access = 'manager';
-						//} else if (user[0].role == 'editor') {
-						//	req.session.access = 'editor';
-						//} else if (user[0].role == 'viewer') {
-						//	req.session.access = 'viewer';
-						//} else {
-						//	req.session.access = 'viewer';
-						//}
+
+						res.redirect('/success');
+
 					}
 				}
 				db.close();
@@ -379,33 +374,18 @@ protectedPages.forEach((page) => {
 // Show the EJS success page
 app.get('/success', (req, res) => {
 
-	res.render('success.ejs',
-		{
-			user: req.session.user.uid,
-			email: req.session.user.email,
-			access: req.session.user.access
+	store.get(req.session.id, function (error, session) {
+		if (error) {
+			res.status(500).send(error);
+			return;
 		}
-		);
-
-
-	//MongoClient.connect(url, function (err, db) {
-	//	if (err) throw err;
-	//	db.db(projDB)
-	//		.collection('mySessions')
-	//		.find({ _id : req.session.id})
-	//		.toArray((err, result) => {
-	//			if (err) throw err;
-	//			console.log(result);
-	//			res.render('success.ejs',
-	//				{
-	//					user: result[0].uid,
-	//					email: result[0].email,
-	//					access: result[0].access
-	//				});
-	//			db.close();
-	//		});
-
-	//});
+		else {
+			res.render('success.ejs', {
+				uid: req.session.user.uid,
+				access: req.session.user.access
+			})
+		}
+		})
 });
 
 // Render EJS Templates (Table View)
