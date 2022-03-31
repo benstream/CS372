@@ -2,13 +2,6 @@
 // Benjamin Stream
 // Solomon Himelbloom
 // 2022-01-30
-//
-// TODO:
-// - Assign Express to the session (cookie)
-// - Attach the session to website middleware
-// - Show pages to the local account based on user roles
-// - Update the following user to the new database access system
-// - Specific pages that are only accessible by editors & admins
 
 const express = require('express');
 const session = require('express-session');
@@ -61,75 +54,22 @@ app.use(
 	})
 );
 
-// TODO (Solomon):
-// - Add a page to the database that will be accessible by all users (or subsection).
-// - Restrict the page to the appropriate user roles.
-// - Experiment with cookies for local storage.
-// - User Routes (Login, Registration, etc.)
+// Assign req.session.user.role to database access levels.
+var userRole = {
+	admin: 'admin',
+	manager: 'manager',
+	editor: 'editor',
+	viewer: 'viewer'
+};
 
-// Allow access to only specific pages
-app.use((req, res, next) => {
-	if (staticPages.includes(req.path)) {
-		next();
-	} else if (protectedPages.includes(req.path)) {
-		if (req.session.user) {
-			next();
-		} else {
-			// Return a response with no access
-			res.redirect('/403');
-			console.log('🔐 User not logged in.');
-		}
-	} else {
-		next();
-	}
-});
-
-// Allow content editor to access the following pages:
-// 1. Movie Dashboard
-// 2. Movie Review
-// 3. Movie Recommendation
-// app.use((req, res, next) => {
-// 	if (req.session.user.role === 'editor') {
-// 		if (req.path === '/dashboard' || req.path === '/review' || req.path === '/recommendation') {
-// 			next();
-// 		} else {
-// 			res.redirect('/404');
-// 			console.log('🔐 User not authorized.');
-// 		}
-// 	} else {
-// 		next();
-// 	}
-// });
-
-// Allow managers to add and remove media
-app.use((req, res, next) => {
-	if (req.path === '/addition') {
-		if (req.session.user.access === 'manager') {
-			next();
-		} else {
-			res.redirect('/403');
-			console.log('🔐 User not logged in.');
-		}
-	} else if (req.path === '/removal') {
-		if (req.session.user.access === 'manager') {
-			next();
-		} else {
-			res.redirect('/403');
-			console.log('🔐 User not logged in.');
-		}
-	} else {
-		next();
-	}
-});
-
-// Assign pages to database role access levels (MongoDB)
+// Assign pages to database role access levels
 app.use((req, res, next) => {
 	if (req.session.user) {
 		MongoClient.connect(url, function (err, db) {
 			if (err) throw err;
 			db.db(projDB)
 				.collection(projAuthTbl)
-				.findOne({ username: req.session.user.username }, function (err, result) {
+				.findOne({ uid: req.session.user.uid }, function (err, result) {
 					if (err) throw err;
 					req.session.user.access = result.access;
 					next();
@@ -140,20 +80,30 @@ app.use((req, res, next) => {
 	}
 });
 
-// * OTHER INFORMAITON (SUPPLEMENTAL):
-// app.use(function(req, res, next) {
-// 	if (staticPages.includes(req.path)) {
-// 		next();
-// 	} else if (protectedPages.includes(req.path)) {
-// 		if (req.session.user) {
-// 			next();
-// 		} else {
-// 			res.redirect('/login');
-// 		}
+// // Block the success page if not logged in.
+// app.use((req, res, next) => {
+// 	if (staticPages.includes(req.path) && !req.session.user) {
+// 		res.redirect('/login');
 // 	} else {
 // 		next();
 // 	}
 // });
+
+// Allow access to only specific pages
+app.use((req, res, next) => {
+	if (staticPages.includes(req.path)) {
+		next();
+	} else if (protectedPages.includes(req.path)) {
+		if (req.session.user) {
+			next();
+		} else {
+			res.status(403).send('⛔️ 403: Forbidden');
+			// console.log('🔐 User not logged in.');
+		}
+	} else {
+		next();
+	}
+});
 
 // Account Management (Login)
 app.post('/login', (req, res) => {
