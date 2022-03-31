@@ -2,20 +2,16 @@
 // Benjamin Stream
 // Solomon Himelbloom
 // 2022-01-30
-//
-// TODO:
-// - Assign Express to the session (cookie)
-// - Attach the session to website middleware
-// - Show pages to the local account based on user roles
-// - Update the following user to the new database access system
-// - Specific pages that are only accessible by editors & admins
 
 const express = require('express');
 const session = require('express-session');
+const querystring = require('querystring');
 const MongoDBSession = require('connect-mongodb-session')(session);
+const passport = require('passport');
 const parser = require('body-parser');
 const bcrypt = require('bcrypt');
 const { redirect } = require('express/lib/response');
+let ejs = require('ejs');
 
 const app = express();
 
@@ -25,35 +21,53 @@ var url = 'mongodb://127.0.0.1:27017/';
 
 const projDB = 'cs372';
 const projAuthTbl = 'user';
+const sessionTbl = 'sessions';
 const projVaultTbl = 'media';
+
+// +---------------+--------+--------+--------+
+// | Page Name     | Viewer | Editor | Manger |
+// +---------------+--------+--------+--------+
+// | Success       | ✅     | ✅      | ✅     |
+// +---------------+--------+--------+--------+
+// | Content       | ✅     | ❌      | ❌     |
+// +---------------+--------+--------+--------+
+// | Addition      | ❌     | ✅      | ❌     |
+// +---------------+--------+--------+--------+
+// | Removal       | ❌     | ✅      | ❌     |
+// +---------------+--------+--------+--------+
+// | Dashboard     | ❌     | ✅      | ✅     |
+// +---------------+--------+--------+--------+
+// | Critic Review | ❌     | ❌      | ✅     |
+// +---------------+--------+--------+--------+
+
+const viewerPages = ['/success', '/content', '/dashboard'];
+const editorPages = ['/success', '/addition', '/removal', '/metadata', '/dashboard'];
+const managerPages = ['/success', '/dashboard', '/review'];
+
+const staticPages = ['/registration', '/forgot', '/failure', '/exists'];
+const protectedPages = ['/addition', '/removal', '/metadata', '/review'];
 
 const hostname = '127.0.0.1';
 const port = 8080;
 
 const saltRounds = 12;
 
-const staticPages = ['/registration', '/forgot', '/success', '/failure', '/exists'];
-
-const protectedPages = [
-	'/addition',
-	'/removal',
-	'/metadata',
-	'/review',
-	'/recommendation',
-	'/content'
-];
-
 app.use(parser.urlencoded({ extended: true }));
 
 // Session Management
 const store = new MongoDBSession({
 	uri: url,
-	collection: 'mySessions'
+	databaseName: projDB,
+	collection: sessionTbl
 });
 
-// FIXME: Add additional fields to session cookie.
+// Add additional fields to session cookie (httpOnly = false).
 app.use(
 	session({
+		cookie: {
+			maxAge: 36000000,
+			httpOnly: false
+		},
 		secret: 'keyboard cat',
 		resave: false,
 		saveUninitialized: false,
@@ -61,8 +75,38 @@ app.use(
 	})
 );
 
-// Account Management (Login/Logout)
-// TODO: Remove session cookie upon logout.
+// Restrict pages from specific users.
+app.use((req, res, next) => {
+	store.get(req.session.id, function (error, session) {
+		if (error) {
+			res.status(500).send('⛔️ 500: Internal Server Error');
+		} else {
+			if (viewerPages.includes(req.path) && req.session.user.access === 'viewer') {
+				console.log('Viewer -- good page');
+				next();
+			} else if (editorPages.includes(req.path) && req.session.user.access === 'editor') {
+				console.log('Editor -- good page');
+				next();
+			} else if (managerPages.includes(req.path) && req.session.user.access === 'manager') {
+				console.log('Manager -- good page');
+				next();
+			} else if (
+				!viewerPages.includes(req.path) &&
+				!editorPages.includes(req.path) &&
+				!managerPages.includes(req.path)
+			) {
+				console.log('Good Page: ' + req.path);
+				res.status(200);
+				next();
+			} else {
+				console.log('Bad Page: ' + req.path);
+				res.status(403).send('⛔️ 403: Forbidden');
+			}
+		}
+	});
+});
+
+// Account Management (Login)
 app.post('/login', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
@@ -78,9 +122,17 @@ app.post('/login', (req, res) => {
 					if (verification == false) {
 						res.redirect('/failure');
 					} else {
+						req.session.isAuth = true;
+						req.session.user = {
+							uid: user[0].uid,
+							email: user[0].email,
+							pwd: user[0].pwd,
+							access: user[0].access
+						};
+						req.session.save();
+						console.log(JSON.stringify(req.session.user));
+
 						res.redirect('/success');
-						// Assigning role to localStorage
-						// localStorage.setItem('role', user[0].access);
 					}
 				}
 				db.close();
@@ -88,7 +140,13 @@ app.post('/login', (req, res) => {
 	});
 });
 
-// New Account Creation
+// Account Management (Logout): Remove session cookie.
+app.get('/logout', (req, res) => {
+	req.session.destroy();
+	res.redirect('/');
+});
+
+// Account Management (Registration)
 app.post('/registrationreq', (req, res) => {
 	bcrypt.genSalt(saltRounds, function (err, salt) {
 		bcrypt.hash(req.body.pwd, salt, function (err, hash) {
@@ -153,7 +211,9 @@ app.post('/addition', (req, res) => {
 			video: req.body.video,
 			category: req.body.category,
 			metadata: req.body.metadata,
-			rating: req.body.rate,
+			choice: false,
+			views: 0,
+			rating: parseInt(req.body.rate),
 			review: req.body.review
 		};
 
@@ -232,7 +292,7 @@ app.post('/review', (req, res) => {
 	});
 });
 
-// Query Movie Database [Title / Category]
+// Query Movie Database [Title / Category / Metadata]
 app.post('/search', (req, res) => {
 	var query = req.body.query;
 	console.log(query);
@@ -243,7 +303,8 @@ app.post('/search', (req, res) => {
 			.find({
 				$or: [
 					{ title: { $regex: query, $options: 'i' } },
-					{ category: { $regex: query, $options: 'i' } }
+					{ category: { $regex: query, $options: 'i' } },
+					{ metadata: { $regex: query, $options: 'i' } }
 				]
 			})
 			.toArray((err, result) => {
@@ -255,15 +316,17 @@ app.post('/search', (req, res) => {
 				if (result.length === 0) {
 					res.send('👀 No results found -- please try again.');
 				} else {
-					res.send(result);
+					res.render('results.ejs', {
+						results: result
+					});
 				}
 			});
 	});
 });
 
-// FIXME: Session Management (Cookies)
+// Session Management (Cookies)
 app.get('/', (req, res) => {
-	req.session.isAuth = true;
+	//req.session.isAuth = false;
 	console.log(req.session);
 	console.log('🍪: ' + req.session.id);
 	res.sendFile(__dirname + '/static/index.html');
@@ -276,6 +339,24 @@ staticPages.forEach((page) => {
 	});
 });
 
+// Render EJS Content page
+app.get('/content', (req, res) => {
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+		db.db(projDB)
+			.collection(projVaultTbl)
+			.find({ video: req.query.id })
+			.toArray((err, result) => {
+				if (err) throw err;
+				console.log(result);
+				db.close();
+				res.render('content.ejs', {
+					movie: result[0]
+				});
+			});
+	});
+});
+
 protectedPages.forEach((page) => {
 	app.get(page, (req, res) => {
 		if (req.session.isAuth) {
@@ -283,6 +364,40 @@ protectedPages.forEach((page) => {
 		} else {
 			res.redirect('/');
 		}
+	});
+});
+
+// Show the EJS success page
+app.get('/success', (req, res) => {
+	store.get(req.session.id, function (error, session) {
+		if (error) {
+			res.status(500).send(error);
+			return;
+		} else {
+			res.render('success.ejs', {
+				uid: req.session.user.uid,
+				access: req.session.user.access
+			});
+		}
+	});
+});
+
+// Render EJS Templates (Table View)
+app.get('/dashboard', (req, res) => {
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+		db.db(projDB)
+			.collection(projVaultTbl)
+			.find({})
+			.toArray((err, result) => {
+				if (err) throw err;
+				console.log(result);
+				db.close();
+				res.render('dashboard.ejs', {
+					title: 'Movie Vault',
+					movies: result
+				});
+			});
 	});
 });
 

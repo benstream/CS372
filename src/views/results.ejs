@@ -1,0 +1,36 @@
+﻿<style>
+    table,
+    th,
+    td {
+        border: 1px solid;
+    }
+</style>
+
+<h1>Search Results 📊</h1>
+
+<div id="navigation"><a href="/success">Home</a> — <a href="/logout">Logout</a></div>
+
+<br />
+
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Thumbnail</th>
+        <th>Rating</th>
+    </tr>
+
+    <% results.forEach(function(results) { %>
+        <tr>
+            <td>
+              <a href="/content?id=<%=results.video%>" id ="resultsLink" _id="<%=results._id%>">
+              <%=results.title%>
+              </a> </td>
+            <td>
+                <img src="https://img.youtube.com/vi/<%=results.video%>/hqdefault.jpg" 
+                alt="<%=results.title%> YouTube Video Thumbnail" 
+                border="3" width="320" height="180"></img>
+            </td>
+            <td><%= results.rating %> / 5 ⭐️</td>
+        </tr>
+        <% }); %>
+</table>
