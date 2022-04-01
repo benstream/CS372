@@ -1,6 +1,6 @@
 body {
 	background-color: #fafafa;
-	font-family: 'Verdana', sans-serif;
+	font-family: 'Roboto', sans-serif;
 	font-size: 1.2em;
 	color: #333;
 }
@@ -18,7 +18,7 @@ h3 {
 }
 
 .box {
-	background-color: #fff;
+	background-color: #fafafa;
 	border-radius: 5px;
 	padding: 10px;
 	margin: 10px;

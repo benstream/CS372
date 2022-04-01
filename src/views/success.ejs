@@ -27,11 +27,6 @@
 
 	<body>
 		<h1>✅ Login successful.</h1>
-		
-		<h3 id="welcome">
-			Welcome, <%= uid %>!
-			(access level: <%= access %>)
-		</h3>
 
 		<div class="box">
 			<form class="search" action="http://localhost:8080/search" method="POST">
@@ -39,6 +34,12 @@
 				<button type="submit">🔎 Search</button>
 			</form>
 		</div>
+
+		<h4 id="welcome">
+			Welcome, <%= uid %>!
+			(access level: <%= access %>)
+		</h4>
+
 
 		<div id="navigation">
 			<ul>
