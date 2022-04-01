@@ -219,6 +219,7 @@ app.post('/addition', (req, res) => {
 			metadata: req.body.metadata,
 			choice: false,
 			views: 0,
+			likes: 0,
 			rating: parseInt(req.body.rate),
 			review: req.body.review
 		};
@@ -306,7 +307,7 @@ app.post('/thumbs', (req, res) => {
 			.collection(projVaultTbl)
 			.findOneAndUpdate(
 				{ title: req.body.title },
-				{ $set: { rating: parseInt(req.body.rating) } },
+				{ $inc: { likes: 1 } },
 				function (err, res) {
 					if (err) throw err;
 					console.log('\n>> Movie rating has been updated!');
