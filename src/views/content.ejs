@@ -103,11 +103,10 @@
 
 				<br />
 
-				<form action="/thumbs" method="POST">
+				
 					<input type="hidden" name="movie_id" value="<%= movie.id %>">
 					<input id="thumbs" class="up" type="submit" value="👍">
 					<button class="down">👎</button>
-				</form>
 
 				<br />
 
@@ -157,10 +156,9 @@
 	views++;
 	localStorage.setItem('on_load_counter', views);
 	document.getElementById('CounterVisitor').innerHTML = views;
-</script>
 
-<script>
-console.log('Client-side code running');
+	// Client Side for thumbs
+	console.log('Client-side code running');
 
 const button = document.getElementById('thumbs');
 button.addEventListener('click', function(e) {
@@ -179,19 +177,7 @@ button.addEventListener('click', function(e) {
     });
 });
 
-setInterval(function() {
-  fetch('/thumbs', {method: 'GET'})
-    .then(function(response) {
-      if(response.ok) return response.json();
-      throw new Error('Request failed.');
-    })
-    .then(function(data) {
-      document.getElementById('counter').innerHTML = `Button was clicked ${data.length} times`;
-    })
-    .catch(function(error) {
-      console.log(error);
-    });
-}, 1000);
 </script>
+
 
 </html>

@@ -310,7 +310,7 @@ app.post('/thumbs', (req, res) => {
 				{ $inc: { likes: 1 } },
 				function (err, res) {
 					if (err) throw err;
-					console.log('\n>> Movie rating has been updated!');
+					console.log('\n>> Movie likes has been updated!');
 					db.close();
 				}
 			);
