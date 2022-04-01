@@ -77,8 +77,8 @@
 
 <body>
 	<h1>
-		<%= movie.title %> 🎬
-	</h1>
+		<%= movie.title %>
+	</title>
 
 	<div id="navigation"><a href="/success">Home</a> — <a href="/">Logout</a></div>
 
@@ -164,7 +164,7 @@ const button = document.getElementById('thumbs');
 button.addEventListener('click', function(e) {
   console.log('thumbs was clicked');
 
-  fetch('/thumbs', {method: 'POST'})
+  fetch('/thumbs?id=<%=movie.video%>', {method: 'POST'})
     .then(function(response) {
       if(response.ok) {
         console.log('click was recorded');

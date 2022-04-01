@@ -306,12 +306,15 @@ app.post('/thumbs', (req, res) => {
 		db.db(projDB)
 			.collection(projVaultTbl)
 			.findOneAndUpdate(
-				{ title: req.body.title },
+				{ video: req.query.id },
 				{ $inc: { likes: 1 } },
 				function (err, res) {
 					if (err) throw err;
-					console.log('\n>> Movie likes has been updated!');
-					db.close();
+					else {
+						console.log(req.query.id);
+						console.log('\n>> Movie likes has been updated!');
+						db.close();
+					}
 				}
 			);
 	});
