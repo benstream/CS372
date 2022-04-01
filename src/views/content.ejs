@@ -1,7 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<link href="/css/style.css" rel="stylesheet" >
 	<title>Video Player</title>
 </head>
 
@@ -98,6 +101,8 @@
 
 				<br />
 
+				<!-- TODO: Keep track of the number of thumbs up and down. -->
+				<!-- movie.likes and movie.dislikes -->
 				<div class="thumbs">
 					<button class="thumbs_up">👍</button>
 					<button class="thumbs_down">👎</button>
@@ -115,8 +120,12 @@
 						<td>
 							<%= movie.views %>
 						</td>
+
 						<td>
-							<%= movie.rating %> / 5 ⭐️
+							<% var mean = movie.likes / (movie.likes + movie.dislikes); %>
+							<% var scaled = mean * 5; %>
+
+							<%= scaled %> / 5 ⭐️
 						</td>
 					</tr>
 

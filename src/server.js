@@ -8,6 +8,8 @@ const session = require('express-session');
 const MongoDBSession = require('connect-mongodb-session')(session);
 const parser = require('body-parser');
 const bcrypt = require('bcrypt');
+const path = require('path');
+var favicon = require('serve-favicon');
 let ejs = require('ejs');
 
 const app = express();
@@ -55,6 +57,14 @@ const saltRounds = 12;
 
 app.use(parser.urlencoded({ extended: true }));
 
+// Add Global CSS Styles
+// app.use(express.static('public'));
+// app.use('/public', express.static(path.join(__dirname, "public")));
+app.use('/css', express.static(__dirname + '/public/css'));
+
+// Add Favicon
+app.use(favicon(__dirname + '/public/images/favicon.ico'));
+
 // Session Management
 const store = new MongoDBSession({
 	uri: url,
@@ -96,7 +106,6 @@ app.use((req, res, next) => {
 				res.status(200);
 				next();
 			} else {
-				// TODO: finalized page error codes (#33).
 				res.status(403).send('⛔️ 403: Forbidden');
 				console.log('Bad Page: ' + req.path);
 			}
@@ -263,7 +272,7 @@ app.post('/metadata', (req, res) => {
 				{ $set: { metadata: req.body.metadata, choice: req.body.choice } },
 				function (err, res) {
 					if (err) throw err;
-					console.log('\n>> Movie metadata has been updated!');
+					console.log('\n📝 Movie metadata has been updated!');
 					db.close();
 				}
 			);
