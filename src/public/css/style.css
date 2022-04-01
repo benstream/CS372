@@ -1,3 +1,5 @@
+/* Video Application Styles */
+
 body {
 	background-color: #fafafa;
 	font-family: 'Roboto', sans-serif;
@@ -15,6 +17,10 @@ h3 {
 	font-size: 1.5em;
 	margin: 0;
 	padding: 0;
+}
+
+input {
+	margin-bottom: 2.5px;
 }
 
 .box {

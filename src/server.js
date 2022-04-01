@@ -57,9 +57,7 @@ const saltRounds = 12;
 
 app.use(parser.urlencoded({ extended: true }));
 
-// Add Global CSS Styles
-// app.use(express.static('public'));
-// app.use('/public', express.static(path.join(__dirname, "public")));
+// Add Global CSS Stylesheet
 app.use('/css', express.static(__dirname + '/public/css'));
 
 // Add Favicon
@@ -150,6 +148,7 @@ app.post('/login', (req, res) => {
 // Account Management (Logout): Remove session cookie.
 app.get('/logout', (req, res) => {
 	req.session.destroy();
+	res.clearCookie('connect.sid');
 	res.redirect('/');
 });
 
@@ -296,6 +295,24 @@ app.post('/review', (req, res) => {
 				}
 			);
 		res.redirect('/success');
+	});
+});
+
+// Capture User's Rating
+app.post('/thumbs', (req, res) => {
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+		db.db(projDB)
+			.collection(projVaultTbl)
+			.findOneAndUpdate(
+				{ title: req.body.title },
+				{ $set: { rating: parseInt(req.body.rating) } },
+				function (err, res) {
+					if (err) throw err;
+					console.log('\n>> Movie rating has been updated!');
+					db.close();
+				}
+			);
 	});
 });
 

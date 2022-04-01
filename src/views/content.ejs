@@ -87,7 +87,9 @@
 	<div class="video-player">
 		<div class="viewer-choice">
 			<% if (movie.choice) { %>
-				<mark>Viewer's Choice</mark>
+				<mark>
+					<strong>Viewer's Choice</strong>
+				</mark>
 
 				<br />
 				<% } %>
@@ -101,12 +103,11 @@
 
 				<br />
 
-				<!-- TODO: Keep track of the number of thumbs up and down. -->
-				<!-- movie.likes and movie.dislikes -->
-				<div class="thumbs">
-					<button class="thumbs_up">👍</button>
-					<button class="thumbs_down">👎</button>
-				</div>
+				<form action="/thumbs" method="POST">
+					<input type="hidden" name="movie_id" value="<%= movie.id %>">
+					<input class="up" type="submit" value="👍">
+					<button class="down">👎</button>
+				</form>
 
 				<br />
 
@@ -118,14 +119,26 @@
 
 					<tr>
 						<td>
-							<%= movie.views %>
+							<!-- <%= movie.views %> -->
+							<div id="CounterVisitor">
+								<span class="counter-item">0</span>
+								<span class="counter-item">0</span>
+								<span class="counter-item">1</span>
+								<span class="counter-item">1</span>
+								<span class="counter-item">8</span>
+								<span class="counter-item">4</span>
+							</div>
 						</td>
 
 						<td>
+							<% if (isNaN(movie.avg_rating)) { %>
+								0 ⭐️
+							<% } else { %>
 							<% var mean = movie.likes / (movie.likes + movie.dislikes); %>
 							<% var scaled = mean * 5; %>
 
 							<%= scaled %> / 5 ⭐️
+							<% } %>
 						</td>
 					</tr>
 
@@ -134,5 +147,16 @@
 		</div>
 	</div>
 </body>
+
+<script>
+	// Session Content View Counter
+	var views = localStorage.getItem('on_load_counter');
+	if (views === null) {
+		views = 0;
+	}
+	views++;
+	localStorage.setItem('on_load_counter', views);
+	document.getElementById('CounterVisitor').innerHTML = views;
+</script>
 
 </html>
