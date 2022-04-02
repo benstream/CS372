@@ -305,18 +305,14 @@ app.post('/thumbs', (req, res) => {
 		if (err) throw err;
 		db.db(projDB)
 			.collection(projVaultTbl)
-			.findOneAndUpdate(
-				{ video: req.query.id },
-				{ $inc: { likes: 1 } },
-				function (err, res) {
-					if (err) throw err;
-					else {
-						console.log(req.query.id);
-						console.log('\n>> Movie likes has been updated!');
-						db.close();
-					}
+			.findOneAndUpdate({ video: req.query.id }, { $inc: { likes: 1 } }, function (err, res) {
+				if (err) throw err;
+				else {
+					console.log(req.query.id);
+					console.log('\n>> Movie likes has been updated!');
+					db.close();
 				}
-			);
+			});
 	});
 });
 
