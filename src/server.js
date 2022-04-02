@@ -5,12 +5,11 @@
 
 const express = require('express');
 const session = require('express-session');
-const querystring = require('querystring');
 const MongoDBSession = require('connect-mongodb-session')(session);
-const passport = require('passport');
 const parser = require('body-parser');
 const bcrypt = require('bcrypt');
-const { redirect } = require('express/lib/response');
+const path = require('path');
+var favicon = require('serve-favicon');
 let ejs = require('ejs');
 
 const app = express();
@@ -24,23 +23,27 @@ const projAuthTbl = 'user';
 const sessionTbl = 'sessions';
 const projVaultTbl = 'media';
 
-// +---------------+--------+--------+--------+
-// | Page Name     | Viewer | Editor | Manger |
-// +---------------+--------+--------+--------+
-// | Success       | ✅     | ✅      | ✅     |
-// +---------------+--------+--------+--------+
-// | Content       | ✅     | ❌      | ❌     |
-// +---------------+--------+--------+--------+
-// | Addition      | ❌     | ✅      | ❌     |
-// +---------------+--------+--------+--------+
-// | Removal       | ❌     | ✅      | ❌     |
-// +---------------+--------+--------+--------+
-// | Dashboard     | ❌     | ✅      | ✅     |
-// +---------------+--------+--------+--------+
-// | Critic Review | ❌     | ❌      | ✅     |
-// +---------------+--------+--------+--------+
+/*
++-----------+--------+--------+--------+
+| Page Name | Viewer | Editor | Manger |
++-----------+--------+--------+--------+
+| Success   | ✅      | ✅     | ✅     |
++-----------+--------+--------+--------+
+| Content   | ✅      | ❌     | ❌     |
++-----------+--------+--------+--------+
+| Addition  | ❌      | ✅     | ❌     |
++-----------+--------+--------+--------+
+| Removal   | ❌      | ✅     | ❌     |
++-----------+--------+--------+--------+
+| Tags      | ❌      | ✅     | ❌     |
++-----------+--------+--------+--------+
+| Dashboard | ❌      | ✅     | ✅     |
++-----------+--------+--------+--------+
+| Review    | ❌      | ❌     | ✅     |
++-----------+--------+--------+--------+
+*/
 
-const viewerPages = ['/success', '/content', '/dashboard'];
+const viewerPages = ['/success', '/content'];
 const editorPages = ['/success', '/content', '/addition', '/removal', '/metadata', '/dashboard'];
 const managerPages = ['/success', '/content', '/dashboard', '/review'];
 
@@ -53,6 +56,12 @@ const port = 8080;
 const saltRounds = 12;
 
 app.use(parser.urlencoded({ extended: true }));
+
+// Add Global CSS Stylesheet
+app.use('/css', express.static(__dirname + '/public/css'));
+
+// Add Favicon
+app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
 // Session Management
 const store = new MongoDBSession({
@@ -82,25 +91,21 @@ app.use((req, res, next) => {
 			res.status(500).send('⛔️ 500: Internal Server Error');
 		} else {
 			if (viewerPages.includes(req.path) && req.session.user.access === 'viewer') {
-				console.log('Viewer -- good page');
 				next();
 			} else if (editorPages.includes(req.path) && req.session.user.access === 'editor') {
-				console.log('Editor -- good page');
 				next();
 			} else if (managerPages.includes(req.path) && req.session.user.access === 'manager') {
-				console.log('Manager -- good page');
 				next();
 			} else if (
 				!viewerPages.includes(req.path) &&
 				!editorPages.includes(req.path) &&
 				!managerPages.includes(req.path)
 			) {
-				console.log('Good Page: ' + req.path);
 				res.status(200);
 				next();
 			} else {
-				console.log('Bad Page: ' + req.path);
 				res.status(403).send('⛔️ 403: Forbidden');
+				console.log('Bad Page: ' + req.path);
 			}
 		}
 	});
@@ -143,6 +148,7 @@ app.post('/login', (req, res) => {
 // Account Management (Logout): Remove session cookie.
 app.get('/logout', (req, res) => {
 	req.session.destroy();
+	res.clearCookie('connect.sid');
 	res.redirect('/');
 });
 
@@ -213,6 +219,7 @@ app.post('/addition', (req, res) => {
 			metadata: req.body.metadata,
 			choice: false,
 			views: 0,
+			likes: 0,
 			rating: parseInt(req.body.rate),
 			review: req.body.review
 		};
@@ -262,10 +269,10 @@ app.post('/metadata', (req, res) => {
 			.collection(projVaultTbl)
 			.findOneAndUpdate(
 				{ title: req.body.title },
-				{ $set: { metadata: req.body.metadata } },
+				{ $set: { metadata: req.body.metadata, choice: req.body.choice } },
 				function (err, res) {
 					if (err) throw err;
-					console.log('\n>> Movie metadata has been updated!');
+					console.log('\n📝 Movie metadata has been updated!');
 					db.close();
 				}
 			);
@@ -289,6 +296,23 @@ app.post('/review', (req, res) => {
 				}
 			);
 		res.redirect('/success');
+	});
+});
+
+// Capture User's Rating
+app.post('/thumbs', (req, res) => {
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+		db.db(projDB)
+			.collection(projVaultTbl)
+			.findOneAndUpdate({ video: req.query.id }, { $inc: { likes: 1 } }, function (err, res) {
+				if (err) throw err;
+				else {
+					console.log(req.query.id);
+					console.log('\n>> Movie likes has been updated!');
+					db.close();
+				}
+			});
 	});
 });
 
@@ -326,7 +350,6 @@ app.post('/search', (req, res) => {
 
 // Session Management (Cookies)
 app.get('/', (req, res) => {
-	//req.session.isAuth = false;
 	console.log(req.session);
 	console.log('🍪: ' + req.session.id);
 	res.sendFile(__dirname + '/static/index.html');
