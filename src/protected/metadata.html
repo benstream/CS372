@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<link href="/css/style.css" rel="stylesheet" />
+		<title>Movie Tags</title>
+	</head>
+
+	<style>
+		mark {
+			background-color: yellow;
+			color: black;
+		}
+	</style>
+
+	<body>
+		<h1>🔗 Movie Tags</h1>
+	</body>
+
+	<form action="http://localhost:8080/metadata" method="POST">
+		<div>
+			<label for="movie">Movie Name:</label>
+			<input type="text" name="title" id="title" required />
+		</div>
+		<div>
+			<label for="metadata">Tags:</label>
+			<input type="text" name="metadata" id="metadata" />
+		</div>
+		<div>
+			<label for="choice">Viewer's Choice:</label>
+			<input type="checkbox" name="choice" id="choice" value="true" />
+			<mark>Highlighted Selection</mark>
+		</div>
+		<br />
+		<input type="submit" value="Edit Settings" />
+	</form>
+</html>

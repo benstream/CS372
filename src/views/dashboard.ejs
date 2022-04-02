@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<link href="/css/style.css" rel="stylesheet" >
+		<title>Movie Dashboard</title>
+	</head>
+
+<style>
+    table,
+    th,
+    td {
+        border: 1px solid;
+    }
+</style>
+
+<h1>Movie Dashboard 📊</h1>
+
+<div id="navigation"><a href="/success">Home</a> — <a href="/logout">Logout</a></div>
+
+<br />
+
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Review</th>
+        <th>Viewer's Choice</th>
+        <th>Rating</th>
+    </tr>
+
+    <% movies.forEach(function(movie) { %>
+        <tr>
+            <td><%= movie.title %></td>
+            <td><%= movie.review %></td>
+            <td>
+                <% if (movie.choice) { %>
+                    ✅
+                <% } %>
+                <% if (!movie.choice) { %>
+                    ❌
+                <% } %>
+            </td>
+            <td><%= movie.rating %> / 5 ⭐️</td>
+        </tr>
+    <% }); %>
+</table>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<link href="/css/style.css" rel="stylesheet" >
+		<title>Login Page</title>
+	</head>
+
+	<script>
+		setTimeout(function () {
+			inactivity('⏰ Logging out...');
+			setTimeout(function () {
+				location.href = '/';
+			}, 2000);
+		}, 100000);
+
+		function inactivity(value) {
+			document.getElementById('idle-alert').innerHTML = value;
+		}
+
+		function redirect(destination) {
+			location.href = destination;
+		}
+	</script>
+
+	<body>
+		<h1>✅ Login successful.</h1>
+
+		<div class="box">
+			<form class="search" action="http://localhost:8080/search" method="POST">
+				<input class="bar" type="text" placeholder="Type a movie to watch..." name="query" />
+				<button type="submit">🔎 Search</button>
+			</form>
+		</div>
+
+		<h4 id="welcome">
+			Welcome, <%= uid %>!
+			(access level: <%= access %>)
+		</h4>
+
+
+		<div id="navigation">
+			<ul>
+				<li>
+					<a href="/addition">Add</a> — <a href="/removal">Remove</a> — <a href="/metadata">Edit</a>
+				</li>
+				<li><a href="/dashboard">Movie Dashboard</a></li>
+				<li><a href="/review">Critic Reviews</a></li>
+				<li><a href="/logout">Logout</a></li>
+			</ul>
+		</div>
+
+		<h3 id="idle-alert"></h3>
+	</body>
+</html>

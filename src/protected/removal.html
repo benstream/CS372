@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<link href="/css/style.css" rel="stylesheet" />
+		<title>Movie Removal</title>
+	</head>
+
+	<body>
+		<h1>➖ Movie Removal</h1>
+	</body>
+
+	<form action="http://localhost:8080/removal" method="POST">
+		<div>
+			<label for="movie">Movie Name:</label>
+			<input type="text" name="title" id="title" required />
+		</div>
+		<div>
+			<label for="link">Movie Link / Video ID:</label>
+			<input type="text" name="video" id="video" />
+		</div>
+		<br />
+		<input type="submit" value="Remove Movie" />
+	</form>
+</html>

@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link href="/css/style.css" rel="stylesheet" >
+    <title>Search Results</title>
+</head>
+
+<style>
+    table,
+    th,
+    td {
+        border: 1px solid;
+    }
+</style>
+
+<h1>Search Results 📊</h1>
+
+<div id="navigation"><a href="/success">Home</a> — <a href="/logout">Logout</a></div>
+
+<br />
+
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Thumbnail</th>
+        <th>Rating</th>
+    </tr>
+
+    <% results.forEach(function(results) { %>
+        <tr>
+            <td>
+              <a href="/content?id=<%=results.video%>" id ="resultsLink" _id="<%=results._id%>">
+              <%=results.title%>
+              </a> </td>
+            <td>
+                <a href="/content?id=<%=results.video%>" id ="resultsLink" _id="<%=results._id%>">
+                    <img src="https://img.youtube.com/vi/<%=results.video%>/hqdefault.jpg" 
+                    alt="<%=results.title%> YouTube Video Thumbnail" 
+                    border="3" width="320" height="180"></img>
+                </a>
+            </td>
+            <td><%= results.rating %> / 5 ⭐️</td>
+        </tr>
+        <% }); %>
+</table>
