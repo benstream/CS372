@@ -89,15 +89,21 @@ app.use((req, res, next) => {
 	store.get(req.session.id, function (error, session) {
 		if (error) {
 			res.status(500).send('⛔️ 500: Internal Server Error');
-		} else {
-			if (viewerPages.includes(req.path) && req.session.user.access === 'viewer'
-			|| editorPages.includes(req.path) && req.session.user.access === 'editor'
-			|| managerPages.includes(req.path) && req.session.user.access === 'manager') {
-				res.status(200);
-				next();
-			} else {
-				res.status(403).send('❌ 403: Forbidden');
-			}
+		} else if (viewerPages.includes(req.path) && req.session.user.access === 'viewer') {
+			next();
+		} else if (editorPages.includes(req.path) && req.session.user.access === 'editor') {
+			next();
+		} else if (managerPages.includes(req.path) && req.session.user.access === 'manager') {
+			next();
+		} else if (
+			!viewerPages.includes(req.path) &&
+			!editorPages.includes(req.path) &&
+			!managerPages.includes(req.path)
+		) {
+			next();
+		}
+		else {
+			res.status(403).send('❌ 403: Forbidden');
 		}
 	});
 });
@@ -368,7 +374,9 @@ app.get('/content', (req, res) => {
 	});
 });
 
-
+app.get('/', (req, res) => {
+	res.sendFile(__dirname + '/static/index.html');
+});
 
 // Show the EJS success page
 app.get('/success', (req, res) => {
