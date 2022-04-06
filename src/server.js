@@ -374,6 +374,7 @@ app.get('/content', (req, res) => {
 	});
 });
 
+// Static Login Page
 app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/static/index.html');
 });
