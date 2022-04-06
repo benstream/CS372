@@ -90,22 +90,13 @@ app.use((req, res, next) => {
 		if (error) {
 			res.status(500).send('⛔️ 500: Internal Server Error');
 		} else {
-			if (viewerPages.includes(req.path) && req.session.user.access === 'viewer') {
-				next();
-			} else if (editorPages.includes(req.path) && req.session.user.access === 'editor') {
-				next();
-			} else if (managerPages.includes(req.path) && req.session.user.access === 'manager') {
-				next();
-			} else if (
-				!viewerPages.includes(req.path) &&
-				!editorPages.includes(req.path) &&
-				!managerPages.includes(req.path)
-			) {
+			if (viewerPages.includes(req.path) && req.session.user.access === 'viewer'
+			|| editorPages.includes(req.path) && req.session.user.access === 'editor'
+			|| managerPages.includes(req.path) && req.session.user.access === 'manager') {
 				res.status(200);
 				next();
 			} else {
-				res.status(403).send('⛔️ 403: Forbidden');
-				console.log('Bad Page: ' + req.path);
+				res.status(403).send('❌ 403: Forbidden');
 			}
 		}
 	});
@@ -135,7 +126,6 @@ app.post('/login', (req, res) => {
 							access: user[0].access
 						};
 						req.session.save();
-						console.log(JSON.stringify(req.session.user));
 
 						res.redirect('/success');
 					}
@@ -148,7 +138,7 @@ app.post('/login', (req, res) => {
 // Account Management (Logout): Remove session cookie.
 app.get('/logout', (req, res) => {
 	req.session.destroy();
-	res.clearCookie('connect.sid');
+	// res.clearCookie('connect.sid');
 	res.redirect('/');
 });
 
@@ -308,7 +298,6 @@ app.post('/thumbs', (req, res) => {
 			.findOneAndUpdate({ video: req.query.id }, { $inc: { likes: 1 } }, function (err, res) {
 				if (err) throw err;
 				else {
-					console.log(req.query.id);
 					console.log('\n>> Movie likes has been updated!');
 					db.close();
 				}
@@ -319,7 +308,6 @@ app.post('/thumbs', (req, res) => {
 // Query Movie Database [Title / Category / Metadata]
 app.post('/search', (req, res) => {
 	var query = req.body.query;
-	console.log(query);
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
 		db.db(projDB)
@@ -333,8 +321,6 @@ app.post('/search', (req, res) => {
 			})
 			.toArray((err, result) => {
 				if (err) throw err;
-				console.log('🔍 Search Query: ' + query);
-				console.log(result);
 				db.close();
 
 				if (result.length === 0) {
@@ -348,35 +334,10 @@ app.post('/search', (req, res) => {
 	});
 });
 
-// Session Management (Cookies)
-app.get('/', (req, res) => {
-	console.log(req.session);
-	console.log('🍪: ' + req.session.id);
-	res.sendFile(__dirname + '/static/index.html');
-});
-
 // Loading Static & Protected Pages
 staticPages.forEach((page) => {
 	app.get(page, (req, res) => {
 		res.sendFile(__dirname + '/static' + page + '.html');
-	});
-});
-
-// Render EJS Content page
-app.get('/content', (req, res) => {
-	MongoClient.connect(url, function (err, db) {
-		if (err) throw err;
-		db.db(projDB)
-			.collection(projVaultTbl)
-			.find({ video: req.query.id })
-			.toArray((err, result) => {
-				if (err) throw err;
-				console.log(result);
-				db.close();
-				res.render('content.ejs', {
-					movie: result[0]
-				});
-			});
 	});
 });
 
@@ -389,6 +350,25 @@ protectedPages.forEach((page) => {
 		}
 	});
 });
+
+// Render EJS Content page
+app.get('/content', (req, res) => {
+	MongoClient.connect(url, function (err, db) {
+		if (err) throw err;
+		db.db(projDB)
+			.collection(projVaultTbl)
+			.find({ video: req.query.id })
+			.toArray((err, result) => {
+				if (err) throw err;
+				db.close();
+				res.render('content.ejs', {
+					movie: result[0]
+				});
+			});
+	});
+});
+
+
 
 // Show the EJS success page
 app.get('/success', (req, res) => {
@@ -414,7 +394,6 @@ app.get('/dashboard', (req, res) => {
 			.find({})
 			.toArray((err, result) => {
 				if (err) throw err;
-				console.log(result);
 				db.close();
 				res.render('dashboard.ejs', {
 					title: 'Movie Vault',
