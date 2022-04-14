@@ -70,7 +70,7 @@ const store = new MongoDBSession({
 	collection: sessionTbl
 });
 
-// Add additional fields to session cookie (httpOnly = false).
+// Add additional fields to session cookie (httpOnly -> false).
 app.use(
 	session({
 		cookie: {
@@ -89,24 +89,20 @@ app.use((req, res, next) => {
 	store.get(req.session.id, function (error, session) {
 		if (error) {
 			res.status(500).send('⛔️ 500: Internal Server Error');
+		} else if (viewerPages.includes(req.path) && req.session.user.access === 'viewer') {
+			next();
+		} else if (editorPages.includes(req.path) && req.session.user.access === 'editor') {
+			next();
+		} else if (managerPages.includes(req.path) && req.session.user.access === 'manager') {
+			next();
+		} else if (
+			!viewerPages.includes(req.path) &&
+			!editorPages.includes(req.path) &&
+			!managerPages.includes(req.path)
+		) {
+			next();
 		} else {
-			if (viewerPages.includes(req.path) && req.session.user.access === 'viewer') {
-				next();
-			} else if (editorPages.includes(req.path) && req.session.user.access === 'editor') {
-				next();
-			} else if (managerPages.includes(req.path) && req.session.user.access === 'manager') {
-				next();
-			} else if (
-				!viewerPages.includes(req.path) &&
-				!editorPages.includes(req.path) &&
-				!managerPages.includes(req.path)
-			) {
-				res.status(200);
-				next();
-			} else {
-				res.status(403).send('⛔️ 403: Forbidden');
-				console.log('Bad Page: ' + req.path);
-			}
+			res.status(403).send('❌ 403: Forbidden');
 		}
 	});
 });
@@ -117,7 +113,7 @@ app.post('/login', (req, res) => {
 		if (err) throw err;
 		db.db(projDB)
 			.collection(projAuthTbl)
-			.find({ uid: req.body.uid })
+			.find({ uid: {'$regex': req.body.uid, '$options': 'i'} })
 			.toArray((err, user) => {
 				if (err) throw err;
 				if (!user[0]) {
@@ -131,11 +127,9 @@ app.post('/login', (req, res) => {
 						req.session.user = {
 							uid: user[0].uid,
 							email: user[0].email,
-							pwd: user[0].pwd,
 							access: user[0].access
 						};
 						req.session.save();
-						console.log(JSON.stringify(req.session.user));
 
 						res.redirect('/success');
 					}
@@ -148,7 +142,6 @@ app.post('/login', (req, res) => {
 // Account Management (Logout): Remove session cookie.
 app.get('/logout', (req, res) => {
 	req.session.destroy();
-	res.clearCookie('connect.sid');
 	res.redirect('/');
 });
 
@@ -166,7 +159,7 @@ app.post('/registrationreq', (req, res) => {
 				};
 				db.db(projDB)
 					.collection(projAuthTbl)
-					.find({ uid: req.body.uid })
+					.find({ uid: { '$regex': req.body.uid, '$options': 'i' } })
 					.toArray((err, user) => {
 						if (err) throw err;
 						if (user[0]) {
@@ -299,7 +292,7 @@ app.post('/review', (req, res) => {
 	});
 });
 
-// Capture User's Rating
+// Capture User Ratings
 app.post('/thumbs', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
@@ -308,7 +301,6 @@ app.post('/thumbs', (req, res) => {
 			.findOneAndUpdate({ video: req.query.id }, { $inc: { likes: 1 } }, function (err, res) {
 				if (err) throw err;
 				else {
-					console.log(req.query.id);
 					console.log('\n>> Movie likes has been updated!');
 					db.close();
 				}
@@ -319,7 +311,6 @@ app.post('/thumbs', (req, res) => {
 // Query Movie Database [Title / Category / Metadata]
 app.post('/search', (req, res) => {
 	var query = req.body.query;
-	console.log(query);
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
 		db.db(projDB)
@@ -328,13 +319,11 @@ app.post('/search', (req, res) => {
 				$or: [
 					{ title: { $regex: query, $options: 'i' } },
 					{ category: { $regex: query, $options: 'i' } },
-					{ metadata: { $regex: query, $options: 'i' } }
+					{ metadata: query }
 				]
 			})
 			.toArray((err, result) => {
 				if (err) throw err;
-				console.log('🔍 Search Query: ' + query);
-				console.log(result);
 				db.close();
 
 				if (result.length === 0) {
@@ -348,17 +337,20 @@ app.post('/search', (req, res) => {
 	});
 });
 
-// Session Management (Cookies)
-app.get('/', (req, res) => {
-	console.log(req.session);
-	console.log('🍪: ' + req.session.id);
-	res.sendFile(__dirname + '/static/index.html');
-});
-
 // Loading Static & Protected Pages
 staticPages.forEach((page) => {
 	app.get(page, (req, res) => {
 		res.sendFile(__dirname + '/static' + page + '.html');
+	});
+});
+
+protectedPages.forEach((page) => {
+	app.get(page, (req, res) => {
+		if (req.session.isAuth) {
+			res.sendFile(__dirname + '/protected' + page + '.html');
+		} else {
+			res.redirect('/');
+		}
 	});
 });
 
@@ -371,7 +363,6 @@ app.get('/content', (req, res) => {
 			.find({ video: req.query.id })
 			.toArray((err, result) => {
 				if (err) throw err;
-				console.log(result);
 				db.close();
 				res.render('content.ejs', {
 					movie: result[0]
@@ -380,14 +371,9 @@ app.get('/content', (req, res) => {
 	});
 });
 
-protectedPages.forEach((page) => {
-	app.get(page, (req, res) => {
-		if (req.session.isAuth) {
-			res.sendFile(__dirname + '/protected' + page + '.html');
-		} else {
-			res.redirect('/');
-		}
-	});
+// Static Login Page
+app.get('/', (req, res) => {
+	res.sendFile(__dirname + '/static/index.html');
 });
 
 // Show the EJS success page
@@ -414,7 +400,6 @@ app.get('/dashboard', (req, res) => {
 			.find({})
 			.toArray((err, result) => {
 				if (err) throw err;
-				console.log(result);
 				db.close();
 				res.render('dashboard.ejs', {
 					title: 'Movie Vault',

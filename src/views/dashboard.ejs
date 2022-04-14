@@ -26,15 +26,16 @@
     <tr>
         <th>Title</th>
         <th>Review</th>
-        <th>Viewer's Choice</th>
+        <th>VC</th>
         <th>Rating</th>
+        <th>Likes</th>
     </tr>
 
     <% movies.forEach(function(movie) { %>
         <tr>
             <td><%= movie.title %></td>
             <td><%= movie.review %></td>
-            <td>
+            <td style="text-align:center">
                 <% if (movie.choice) { %>
                     ✅
                 <% } %>
@@ -43,6 +44,7 @@
                 <% } %>
             </td>
             <td><%= movie.rating %> / 5 ⭐️</td>
+            <td><%= movie.likes %></td>
         </tr>
     <% }); %>
 </table>

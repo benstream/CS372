@@ -48,8 +48,7 @@
 				playsinline: 1
 			},
 			events: {
-				onReady: onPlayerReady,
-				onStateChange: onPlayerStateChange
+				onReady: onPlayerReady
 			}
 		});
 	}
@@ -57,20 +56,6 @@
 	// The API will call this function when the video player is ready.
 	function onPlayerReady(event) {
 		event.target.playVideo();
-	}
-
-	// The API calls this function when the player's state changes.
-	// The function indicates that when playing a video (state=1),
-	// the player should play for six seconds and then stop.
-	var done = false;
-	function onPlayerStateChange(event) {
-		if (event.data == YT.PlayerState.PLAYING && !done) {
-			setTimeout(stopVideo, 6000);
-			done = true;
-		}
-	}
-	function stopVideo() {
-		player.stopVideo();
 	}
 
 </script>
@@ -162,22 +147,22 @@
 	// Client Side for thumbs
 	console.log('Client-side code running');
 
-const button = document.getElementById('thumbs');
-button.addEventListener('click', function(e) {
-  console.log('thumbs was clicked');
+	const button = document.getElementById('thumbs');
+	button.addEventListener('click', function(e) {
+	console.log('thumbs was clicked');
 
-  fetch('/thumbs?id=<%=movie.video%>', {method: 'POST'})
-    .then(function(response) {
-      if(response.ok) {
-        console.log('click was recorded');
-        return;
-      }
-      throw new Error('Request failed.');
-    })
-    .catch(function(error) {
-      console.log(error);
-    });
-});
+	fetch('/thumbs?id=<%=movie.video%>', {method: 'POST'})
+		.then(function(response) {
+		if(response.ok) {
+			console.log('click was recorded');
+			return;
+		}
+		throw new Error('Request failed.');
+		})
+		.catch(function(error) {
+		console.log(error);
+		});
+	});
 
 </script>
 
