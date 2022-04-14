@@ -70,7 +70,7 @@ const store = new MongoDBSession({
 	collection: sessionTbl
 });
 
-// Add additional fields to session cookie (httpOnly = false).
+// Add additional fields to session cookie (httpOnly -> false).
 app.use(
 	session({
 		cookie: {
@@ -101,8 +101,7 @@ app.use((req, res, next) => {
 			!managerPages.includes(req.path)
 		) {
 			next();
-		}
-		else {
+		} else {
 			res.status(403).send('❌ 403: Forbidden');
 		}
 	});
@@ -128,7 +127,6 @@ app.post('/login', (req, res) => {
 						req.session.user = {
 							uid: user[0].uid,
 							email: user[0].email,
-							pwd: user[0].pwd,
 							access: user[0].access
 						};
 						req.session.save();
@@ -144,7 +142,6 @@ app.post('/login', (req, res) => {
 // Account Management (Logout): Remove session cookie.
 app.get('/logout', (req, res) => {
 	req.session.destroy();
-	// res.clearCookie('connect.sid');
 	res.redirect('/');
 });
 
@@ -295,7 +292,7 @@ app.post('/review', (req, res) => {
 	});
 });
 
-// Capture User's Rating
+// Capture User Ratings
 app.post('/thumbs', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
@@ -322,7 +319,7 @@ app.post('/search', (req, res) => {
 				$or: [
 					{ title: { $regex: query, $options: 'i' } },
 					{ category: { $regex: query, $options: 'i' } },
-					{ metadata: { $regex: query, $options: 'i' } }
+					{ metadata: query }
 				]
 			})
 			.toArray((err, result) => {
