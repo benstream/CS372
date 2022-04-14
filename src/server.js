@@ -113,7 +113,7 @@ app.post('/login', (req, res) => {
 		if (err) throw err;
 		db.db(projDB)
 			.collection(projAuthTbl)
-			.find({ uid: req.body.uid })
+			.find({ uid: {'$regex': req.body.uid, '$options': 'i'} })
 			.toArray((err, user) => {
 				if (err) throw err;
 				if (!user[0]) {
@@ -159,7 +159,7 @@ app.post('/registrationreq', (req, res) => {
 				};
 				db.db(projDB)
 					.collection(projAuthTbl)
-					.find({ uid: req.body.uid })
+					.find({ uid: { '$regex': req.body.uid, '$options': 'i' } })
 					.toArray((err, user) => {
 						if (err) throw err;
 						if (user[0]) {
