@@ -27,11 +27,12 @@
         <th>Title</th>
         <th>Thumbnail</th>
         <th>Rating</th>
+        <th>Viewer's Choice</th>
     </tr>
 
     <% results.forEach(function(results) { %>
         <tr>
-            <td>
+            <td style="text-align:center">
               <a href="/content?id=<%=results.video%>" id ="resultsLink" _id="<%=results._id%>">
               <%=results.title%>
               </a> </td>
@@ -42,7 +43,15 @@
                     border="3" width="320" height="180"></img>
                 </a>
             </td>
-            <td><%= results.rating %> / 5 ⭐️</td>
+            <td style="text-align:center"><%= results.rating %> / 5 ⭐️</td>
+            <td style="text-align:center">
+                <% if (results.choice) { %>
+                    ✅
+                <% } %>
+                <% if (!results.choice) { %>
+                    ❌
+                <% } %>
+            </td>
         </tr>
         <% }); %>
 </table>
