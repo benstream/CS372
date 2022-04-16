@@ -10,4 +10,4 @@
 
 # MongoDB
 
-- Database: `cs372` → `user` & `media`
+- Database: `cs372` → `user` + `media`
