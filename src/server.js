@@ -113,7 +113,7 @@ app.post('/login', (req, res) => {
 		if (err) throw err;
 		db.db(projDB)
 			.collection(projAuthTbl)
-			.find({ uid: {'$regex': req.body.uid, '$options': 'i'} })
+			.find({ uid: { $regex: req.body.uid, $options: 'i' } })
 			.toArray((err, user) => {
 				if (err) throw err;
 				if (!user[0]) {
@@ -159,7 +159,7 @@ app.post('/registrationreq', (req, res) => {
 				};
 				db.db(projDB)
 					.collection(projAuthTbl)
-					.find({ uid: { '$regex': req.body.uid, '$options': 'i' } })
+					.find({ uid: { $regex: req.body.uid, $options: 'i' } })
 					.toArray((err, user) => {
 						if (err) throw err;
 						if (user[0]) {
@@ -205,9 +205,16 @@ app.post('/addition', (req, res) => {
 	MongoClient.connect(url, function (err, db) {
 		if (err) throw err;
 
+		// Segment the video URL from the id.
+		if (req.body.video.includes('=')) {
+			var split = req.body.video.split('=')[1];
+		} else {
+			var split = req.body.video;
+		}
+
 		var description = {
 			title: req.body.title,
-			video: req.body.video,
+			video: split,
 			category: req.body.category,
 			metadata: req.body.metadata,
 			choice: false,
